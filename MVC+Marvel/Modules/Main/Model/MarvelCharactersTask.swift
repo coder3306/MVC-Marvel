@@ -8,10 +8,19 @@
 import Foundation
 
 protocol MarvelCharactersTaskInput {
-    func requestCharactersList(for limit: Int, complete: @escaping () -> ())
+    /**
+     * @캐릭터 리스트 요청
+     * @creator : coder3306
+     * @param limit : 한번에 요청할 데이터 갯수
+     */
+    func requestCharactersList(for limit: Int)
 }
 
 protocol MarvelCharactersTaskOutput: AnyObject {
+    /**
+     * @다운로드된 캐릭터 리스트
+     * @creator : coder3306
+     */
     func responseCharactersList(with characters: Characters?)
 }
 
@@ -19,7 +28,7 @@ final class MarvelCharactersTask: MarvelCharactersTaskInput {
     
     weak var output: MarvelCharactersTaskOutput?
     
-    func requestCharactersList(for limit: Int, complete: @escaping () -> ()) {
+    func requestCharactersList(for limit: Int) {
         var parameter = NetworkParameters(url: "", method: .get)
         guard let requestMarvelInfo = parameter.getMarvelData(limit) else { return }
         DispatchQueue.main.async {
@@ -27,7 +36,6 @@ final class MarvelCharactersTask: MarvelCharactersTaskInput {
                 switch response {
                     case .success(let t):
                         self?.output?.responseCharactersList(with: t)
-                        complete()
                     case .failure(let apiError):
                         print("API ERROR --------------- >>>>>>> \(apiError)")
                         self?.output?.responseCharactersList(with: nil)

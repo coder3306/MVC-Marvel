@@ -19,6 +19,7 @@ class MarvelCharactersListViewController: CommonViewController {
     private var requestItemCount = 20
     private var isPaging = true
     private var hasNextPage = true
+    private var isExpandView = [Bool]()
     private var state: State = .loading {
         didSet {
             setLoadingView(state: self.state)
@@ -34,9 +35,7 @@ class MarvelCharactersListViewController: CommonViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        model?.requestCharactersList(for: requestItemCount, complete: {
-            print("asdf")
-        })
+        model?.requestCharactersList(for: requestItemCount)
     }
     
     /**
@@ -96,7 +95,7 @@ class MarvelCharactersListViewController: CommonViewController {
             print(" \(self.requestItemCount) 아이템 갯수,  \(self.hasNextPage) 다음페이지 ")
             self.hasNextPage = self.requestItemCount >= 80 ? false : true
             self.requestItemCount += 20
-//            self.model?.requestCharactersList(for: self.requestItemCount)
+            self.model?.requestCharactersList(for: self.requestItemCount)
         }
     }
 }
@@ -134,6 +133,22 @@ extension MarvelCharactersListViewController: tableViewExtension {
             if let cell = tableView.dequeueReusableCell(withIdentifier: listIdentifier, for: indexPath) as? MarvelCharactersTableViewCell {
                 if let item = tableConfig.items?.first?.data.results[indexPath.row] {
                     cell.setData(item, with: cache)
+                    cell.detailView?.isHidden = isExpandView[indexPath.row]
+                    cell.didSelectCharactersInfo { info in
+                        print("인덱스 ---------- >>>>>> \(indexPath.row) 선택된 코드 ------------ >>>>>> \(info.code)")
+                        print(info.code)
+                    }
+                    cell.didSelectDetail { [weak self] isSelected in
+                        print("확장 셀 인덱스 --------- >>> \(indexPath.row) 확장 상태 ---------- >>> \(isSelected)")
+                        self?.tableMarvelCharacters?.performBatchUpdates({
+                            self?.isExpandView[indexPath.row] = !isSelected
+                            cell.detailView?.isHidden = !isSelected
+                            UIView.animate(withDuration: 0.3) {
+                                cell.detailView?.alpha = isSelected ? 1 : 0
+                                self?.tableMarvelCharacters?.layoutIfNeeded()
+                            }
+                        })
+                    }
                 }
                 return cell
             }
@@ -158,13 +173,18 @@ extension MarvelCharactersListViewController: tableViewExtension {
         }
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
-            return
+    private func requestCharactersDetail(with characters: Result, info: CharactersInfo) {
+        let charactersDetailViewController = MarvelCharacterDetailViewController(nibName: "MarvelCharacterDetailViewController", bundle: nil)
+        switch info {
+            case .comics:
+                charactersDetailViewController.items = characters.comics
+            case .series:
+                charactersDetailViewController.items = characters.series
+            case .events:
+                charactersDetailViewController.items = characters.events
+            case .none:
+                break
         }
-        
-//        let item = self.tableConfig.items?.first?.data.results[indexPath.row]
-        print(self.tableConfig.items?.first?.data.results[indexPath.row])
     }
 }
 
@@ -178,6 +198,10 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput {
     func responseCharactersList(with characters: Characters?) {
         if let characters {
             self.tableConfig.items = [characters]
+            let count = (characters.data.results.count != requestItemCount) ? (characters.data.results.count - requestItemCount) : requestItemCount
+            for _ in 0 ..< count {
+                self.isExpandView.append(true)
+            }
             self.state = .ready
         } else {
             self.tableConfig.items = nil

@@ -8,13 +8,27 @@
 import Foundation
 
 protocol MarvelCharactersDetailTaskInput {
+    func requestComicsList(_ limit: Int)
+    func requestEventList(_ limit: Int)
+    func requestSeriesList(_ limit: Int)
+}
+
+protocol MarvelCharactersDetailTaskOutput: AnyObject {
     
 }
 
-protocol MarvelCharactersDetailTaskOutput {
-    
-}
-
-final class MarvelCharactersDetailTask {
+final class MarvelCharactersDetailTask: MarvelCharactersDetailTaskInput {
     weak var output: MarvelCharactersDetailTaskOutput?
+    
+    func requestComicsList(_ limit: Int) {
+        print(limit)
+    }
+    
+    func requestEventList(_ limit: Int) {
+        print(limit)
+    }
+    
+    func requestSeriesList(_ limit: Int) {
+        print(limit)
+    }
 }

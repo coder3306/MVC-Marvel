@@ -9,6 +9,7 @@ import UIKit
 
 class MarvelCharacterDetailViewController: CommonViewController {
 
+    var items: Comics?
     override func viewDidLoad() {
         super.viewDidLoad()
     }
