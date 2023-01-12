@@ -11,9 +11,10 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
     }
-
-
+    @IBAction func actionMoveCharacters(_ sender: UIButton) {
+        let characters = MarvelCharactersListViewController(nibName: "MarvelCharactersListViewController", bundle: nil)
+        self.navigationController?.pushViewController(characters, animated: true)
+    }
 }
 
