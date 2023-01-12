@@ -11,17 +11,15 @@ struct MarvelKeyDecoder: Decodable {
     var publicKey: String
     var privateKey: String
 }
-// MARK: - Welcome
+
 struct Characters: Codable {
     let data: DataClass
 }
 
-// MARK: - DataClass
 struct DataClass: Codable {
     let results: [Result]
 }
 
-// MARK: - Result
 struct Result: Codable {
     let id: Int
     let name, description: String
@@ -31,19 +29,16 @@ struct Result: Codable {
     let events: Comics
 }
 
-// MARK: - Comics
 struct Comics: Codable {
     let available: Int
     let collectionURI: String
 }
 
-// MARK: - Stories
 struct Stories: Codable {
     let available: Int
     let collectionURI: String
 }
 
-// MARK: - Thumbnail
 struct Thumbnail: Codable {
     let path: String
     let thumbnailExtension: String
@@ -58,7 +53,6 @@ struct Thumbnail: Codable {
     }
 }
 
-// MARK: - URLElement
 struct URLElement: Codable {
     let type: String
     let url: String

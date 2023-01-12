@@ -8,20 +8,18 @@
 import Foundation
 
 protocol MarvelCharactersTaskInput {
-    func requestCharactersList(for limit: Int)
-//    func requestImageDownload(url: URL)
+    func requestCharactersList(for limit: Int, complete: @escaping () -> ())
 }
 
 protocol MarvelCharactersTaskOutput: AnyObject {
     func responseCharactersList(with characters: Characters?)
-//    func responseImage(image: [String: Any]?)
 }
 
 final class MarvelCharactersTask: MarvelCharactersTaskInput {
     
     weak var output: MarvelCharactersTaskOutput?
     
-    func requestCharactersList(for limit: Int) {
+    func requestCharactersList(for limit: Int, complete: @escaping () -> ()) {
         var parameter = NetworkParameters(url: "", method: .get)
         guard let requestMarvelInfo = parameter.getMarvelData(limit) else { return }
         DispatchQueue.main.async {
@@ -29,6 +27,7 @@ final class MarvelCharactersTask: MarvelCharactersTaskInput {
                 switch response {
                     case .success(let t):
                         self?.output?.responseCharactersList(with: t)
+                        complete()
                     case .failure(let apiError):
                         print("API ERROR --------------- >>>>>>> \(apiError)")
                         self?.output?.responseCharactersList(with: nil)
@@ -37,14 +36,4 @@ final class MarvelCharactersTask: MarvelCharactersTaskInput {
         }
         print("RequestItem")
     }
-    
-//    func requestImageDownload(url: URL) {
-//        DispatchQueue.global().async {
-//            NetworkManager.shared.downloadImage(url: url) { [weak self] image in
-//                var result = [String: Any]()
-//                result["\(url)"] = image
-//                self?.output?.responseImage(image: result)
-//            }
-//        }
-//    }
 }

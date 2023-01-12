@@ -34,7 +34,9 @@ class MarvelCharactersListViewController: CommonViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        model?.requestCharactersList(for: requestItemCount)
+        model?.requestCharactersList(for: requestItemCount, complete: {
+            print("asdf")
+        })
     }
     
     /**
@@ -94,7 +96,7 @@ class MarvelCharactersListViewController: CommonViewController {
             print(" \(self.requestItemCount) 아이템 갯수,  \(self.hasNextPage) 다음페이지 ")
             self.hasNextPage = self.requestItemCount >= 80 ? false : true
             self.requestItemCount += 20
-            self.model?.requestCharactersList(for: self.requestItemCount)
+//            self.model?.requestCharactersList(for: self.requestItemCount)
         }
     }
 }
@@ -160,6 +162,7 @@ extension MarvelCharactersListViewController: tableViewExtension {
         if indexPath.section == 1 {
             return
         }
+        
 //        let item = self.tableConfig.items?.first?.data.results[indexPath.row]
         print(self.tableConfig.items?.first?.data.results[indexPath.row])
     }
