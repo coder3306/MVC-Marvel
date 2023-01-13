@@ -21,7 +21,7 @@ protocol MarvelCharactersTaskOutput: AnyObject {
      * @다운로드된 캐릭터 리스트
      * @creator : coder3306
      */
-    func responseCharactersList(with characters: Characters?)
+    func responseCharactersList(with characters: Marvel?)
 }
 
 final class MarvelCharactersTask: MarvelCharactersTaskInput {
@@ -33,7 +33,7 @@ final class MarvelCharactersTask: MarvelCharactersTaskInput {
         var parameter = NetworkParameters(url: url, method: .get)
         guard let requestMarvelInfo = parameter.getMarvelData(limit) else { return }
         DispatchQueue.main.async {
-            NetworkManager.shared.requestData(type: Characters.self, param: requestMarvelInfo) { [weak self] response in
+            NetworkManager.shared.requestData(type: Marvel.self, param: requestMarvelInfo) { [weak self] response in
                 switch response {
                     case .success(let t):
                         self?.output?.responseCharactersList(with: t)

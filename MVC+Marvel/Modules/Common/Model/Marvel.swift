@@ -12,40 +12,52 @@ struct MarvelKeyDecoder: Decodable {
     var privateKey: String
 }
 
-struct Characters: Codable {
+// MARK: - Marvel
+struct Marvel: Codable {
+    let code: Int
+    let status, copyright, attributionText, attributionHTML: String
+    let etag: String
     let data: DataClass
 }
 
+// MARK: - DataClass
 struct DataClass: Codable {
+    let offset, limit, total, count: Int
     let results: [Result]
 }
 
+// MARK: - Result
 struct Result: Codable {
-    //MARK: Common
     let id: Int
-    let title: String
     let name, description: String
     let thumbnail: Thumbnail
     let comics, series: Comics
     let stories: Stories
     let events: Comics
-    
-    //MARK: Series
-    let startYear, endYear: Int
-    let rating, type: String
-    
-    //MARK: Comis
-    let variantDescription: String
 }
 
 struct Comics: Codable {
     let available: Int
     let collectionURI: String
+    let items: [ComicsItem]
+    let returned: Int
+}
+
+struct ComicsItem: Codable {
+    let resourceURI: String
+    let name: String
 }
 
 struct Stories: Codable {
     let available: Int
     let collectionURI: String
+    let items: [StoriesItem]
+    let returned: Int
+}
+
+struct StoriesItem: Codable {
+    let resourceURI: String
+    let name: String
 }
 
 struct Thumbnail: Codable {

@@ -13,13 +13,14 @@ class MarvelCharactersListViewController: CommonViewController {
     @IBOutlet private weak var viewLoading: UIView?
     @IBOutlet private weak var lblAlertMessage: UILabel?
     
-    private var tableConfig = CommonConfig<Characters>()
+    private var tableConfig = CommonConfig<Marvel>()
     private var model: MarvelCharactersTaskInput?
     private var cache = NSCache<NSString, UIImage>()
     private var requestItemCount = 20
     private var isPaging = true
     private var hasNextPage = true
     private var isExpandView = [Bool]()
+    private var cellHeights = [IndexPath: CGFloat]()
     private var state: State = .loading {
         didSet {
             setLoadingView(state: self.state)
@@ -79,6 +80,7 @@ class MarvelCharactersListViewController: CommonViewController {
      * @creator : coder3306
      */
     private func receivePaging() {
+        self.tableMarvelCharacters?.isUserInteractionEnabled = false
         self.isPaging = true
         self.tableMarvelCharacters?.reloadSections(IndexSet(integer: 1), with: .none)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -96,6 +98,7 @@ class MarvelCharactersListViewController: CommonViewController {
             self.hasNextPage = self.requestItemCount >= 80 ? false : true
             self.requestItemCount += 20
             self.model?.requestCharactersList(for: self.requestItemCount)
+            self.tableMarvelCharacters?.isUserInteractionEnabled = true
         }
     }
 }
@@ -141,6 +144,7 @@ extension MarvelCharactersListViewController: tableViewExtension {
                         }
                     }
                     cell.didSelectDetail { [weak self] isSelected in
+                        //FIXME: - 셀 확장 시 버튼 클릭하면 인덱스 오류 발생
                         print("확장 셀 인덱스 --------- >>> \(indexPath.row) 확장 상태 ---------- >>> \(isSelected)")
                         self?.tableMarvelCharacters?.performBatchUpdates({
                             self?.isExpandView[indexPath.row] = !isSelected
@@ -162,6 +166,14 @@ extension MarvelCharactersListViewController: tableViewExtension {
         }
 
         return UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cellHeights[indexPath] = cell.frame.size.height
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return cellHeights[indexPath] ?? UITableView.automaticDimension
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -198,7 +210,7 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput {
      * @creator : coder3306
      * @param characters : 캐릭터 리스트
      */
-    func responseCharactersList(with characters: Characters?) {
+    func responseCharactersList(with characters: Marvel?) {
         if let characters {
             self.tableConfig.items = [characters]
             let count = (characters.data.results.count != requestItemCount) ? (characters.data.results.count - requestItemCount) : requestItemCount

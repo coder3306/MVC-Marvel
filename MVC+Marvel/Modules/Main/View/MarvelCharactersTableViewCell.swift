@@ -23,7 +23,7 @@ enum CharactersInfo: Int {
     }
     var code: Int {
         return rawValue
-    }   
+    }
 }
 
 class MarvelCharactersTableViewCell: CommonTableViewCell {
@@ -34,14 +34,19 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
     @IBOutlet private weak var lblSeriesCount: UILabel?
     @IBOutlet private weak var lblEventsCount: UILabel?
     @IBOutlet weak var detailView: UIStackView?
+    @IBOutlet private var detailItemView: [UIView]?
     
     // 선택된 캐릭터 데이터 전달 핸들러
-    var selectHandler: dataHandler<CharactersInfo>?
+    private var selectHandler: dataHandler<CharactersInfo>?
     // 상세보기 버튼 선택 핸들러
-    var actionHandler: boolHandler?
+    private var actionHandler: boolHandler?
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        detailItemView?.forEach({
+            
+            $0.layer.setBorderLayout(radius: 10)
+        })
     }
     
     public func setData(_ result: Result, with cache: NSCache<NSString, UIImage>) {
