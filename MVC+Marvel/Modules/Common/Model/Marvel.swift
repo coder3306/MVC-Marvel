@@ -21,12 +21,21 @@ struct DataClass: Codable {
 }
 
 struct Result: Codable {
+    //MARK: Common
     let id: Int
+    let title: String
     let name, description: String
     let thumbnail: Thumbnail
     let comics, series: Comics
     let stories: Stories
     let events: Comics
+    
+    //MARK: Series
+    let startYear, endYear: Int
+    let rating, type: String
+    
+    //MARK: Comis
+    let variantDescription: String
 }
 
 struct Comics: Codable {

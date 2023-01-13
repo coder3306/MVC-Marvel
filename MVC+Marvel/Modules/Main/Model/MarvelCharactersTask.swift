@@ -27,9 +27,10 @@ protocol MarvelCharactersTaskOutput: AnyObject {
 final class MarvelCharactersTask: MarvelCharactersTaskInput {
     
     weak var output: MarvelCharactersTaskOutput?
+    private let url = "http://gateway.marvel.com/v1/public/characters"
     
     func requestCharactersList(for limit: Int) {
-        var parameter = NetworkParameters(url: "", method: .get)
+        var parameter = NetworkParameters(url: url, method: .get)
         guard let requestMarvelInfo = parameter.getMarvelData(limit) else { return }
         DispatchQueue.main.async {
             NetworkManager.shared.requestData(type: Characters.self, param: requestMarvelInfo) { [weak self] response in

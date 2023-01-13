@@ -134,9 +134,11 @@ extension MarvelCharactersListViewController: tableViewExtension {
                 if let item = tableConfig.items?.first?.data.results[indexPath.row] {
                     cell.setData(item, with: cache)
                     cell.detailView?.isHidden = isExpandView[indexPath.row]
-                    cell.didSelectCharactersInfo { info in
-                        print("인덱스 ---------- >>>>>> \(indexPath.row) 선택된 코드 ------------ >>>>>> \(info.code)")
-                        print(info.code)
+                    cell.didSelectCharactersInfo { [weak self] info in
+                        print("인덱스 ---------- >>>>>> \(indexPath.row) 선택된 코드 ------------ >>>>>> \(info?.code ?? 0)")
+                        if let selectedItem = self?.tableConfig.items?.first?.data.results[indexPath.row], let info {
+                            self?.requestCharactersDetail(with: selectedItem, info: info)
+                        }
                     }
                     cell.didSelectDetail { [weak self] isSelected in
                         print("확장 셀 인덱스 --------- >>> \(indexPath.row) 확장 상태 ---------- >>> \(isSelected)")
@@ -185,6 +187,7 @@ extension MarvelCharactersListViewController: tableViewExtension {
             case .none:
                 break
         }
+        self.navigationController?.pushViewController(charactersDetailViewController, animated: true)
     }
 }
 

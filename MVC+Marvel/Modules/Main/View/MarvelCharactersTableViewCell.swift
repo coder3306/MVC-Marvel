@@ -23,7 +23,7 @@ enum CharactersInfo: Int {
     }
     var code: Int {
         return rawValue
-    }
+    }   
 }
 
 class MarvelCharactersTableViewCell: CommonTableViewCell {
@@ -35,8 +35,10 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
     @IBOutlet private weak var lblEventsCount: UILabel?
     @IBOutlet weak var detailView: UIStackView?
     
-    var selectHandler: (CharactersInfo) -> () = { _ in }
-    var actionHandler: (Bool) -> () = { _ in }
+    // 선택된 캐릭터 데이터 전달 핸들러
+    var selectHandler: dataHandler<CharactersInfo>?
+    // 상세보기 버튼 선택 핸들러
+    var actionHandler: boolHandler?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -61,11 +63,11 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
         }
     }
     
-    public func didSelectCharactersInfo(_ complete: @escaping (CharactersInfo) -> ()) {
+    public func didSelectCharactersInfo(_ complete: @escaping dataHandler<CharactersInfo>) {
         self.selectHandler = complete
     }
     
-    public func didSelectDetail(_ complete: @escaping (Bool) -> ()) {
+    public func didSelectDetail(_ complete: @escaping boolHandler) {
         self.actionHandler = complete
     }
 }
@@ -73,12 +75,11 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
 //MARK: - Action
 extension MarvelCharactersTableViewCell {
     @IBAction private func actionSelectCharactersInfo(_ sender: UIButton) {
-        print(sender.tag)
-        self.selectHandler(CharactersInfo(type: sender.tag))
+        self.selectHandler?(CharactersInfo(type: sender.tag))
     }
     
     @IBAction private func actionShowDetail(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected
-        self.actionHandler(sender.isSelected)
+        self.actionHandler?(sender.isSelected)
     }
 }

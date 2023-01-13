@@ -7,8 +7,15 @@
 
 import UIKit
 
+/// 테이블뷰 확장 프로토콜
 typealias tableViewExtension = UITableViewDelegate & UITableViewDataSource
+/// 컬렉션뷰 확장 프로토콜
 typealias collectionViewExtension = UICollectionViewDataSource & UICollectionViewDelegate & UICollectionViewDelegateFlowLayout
+
+/// 데이터 전달 콜백 핸들러
+typealias dataHandler<T> = (T?) -> ()
+/// 불 데이터 전달 콜백 핸들러
+typealias boolHandler = (Bool) -> ()
 
 class CommonViewController: UIViewController {
     
