@@ -75,30 +75,41 @@ class MarvelCharactersListViewController: CommonViewController {
         }
     }
     
-    /**
-     * @페이징 요청 수신
-     * @creator : coder3306
-     */
-    private func receivePaging() {
-        self.tableMarvelCharacters?.isUserInteractionEnabled = false
-        self.isPaging = true
-        self.tableMarvelCharacters?.reloadSections(IndexSet(integer: 1), with: .none)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.processPaging()
+    private func requestCharactersDetail(with characters: Result, info: CharactersInfo) {
+        let charactersDetailViewController = MarvelCharacterDetailViewController(nibName: "MarvelCharacterDetailViewController", bundle: nil)
+        var available: Bool?
+        switch info {
+            case .comics:
+                available = checkEmptyCharactersDetail(characters.comics.available)
+                charactersDetailViewController.items = characters.comics
+            case .series:
+                available = checkEmptyCharactersDetail(characters.series.available)
+                charactersDetailViewController.items = characters.series
+            case .events:
+                available = checkEmptyCharactersDetail(characters.events.available)
+                charactersDetailViewController.items = characters.events
+            case .none:
+                break
+        }
+        if available ?? false {
+            self.navigationController?.pushViewController(charactersDetailViewController, animated: true)
         }
     }
     
-    /**
-     * @페이징 요청 처리
-     * @creator : coder3306
-     */
-    private func processPaging() {
+    private func checkEmptyCharactersDetail(_ available: Int) -> Bool {
+        if available == 0 {
+            self.showAlert()
+            return false
+        }
+        return true
+    }
+    
+    private func showAlert() {
         DispatchQueue.main.async {
-            print(" \(self.requestItemCount) 아이템 갯수,  \(self.hasNextPage) 다음페이지 ")
-            self.hasNextPage = self.requestItemCount >= 80 ? false : true
-            self.requestItemCount += 20
-            self.model?.requestCharactersList(for: self.requestItemCount)
-            self.tableMarvelCharacters?.isUserInteractionEnabled = true
+            let alert = UIAlertController(title: "알림", message: "정보가 없습니다.", preferredStyle: UIAlertController.Style.alert)
+            let ok = UIAlertAction(title: "OK", style: .default)
+            alert.addAction(ok)
+            self.present(alert, animated: false)
         }
     }
 }
@@ -176,6 +187,9 @@ extension MarvelCharactersListViewController: tableViewExtension {
         return cellHeights[indexPath] ?? UITableView.automaticDimension
     }
     
+    //******************************************************
+    //MARK: - Paging
+    //******************************************************
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y > (self.navigationController?.navigationBar.frame.size.height ?? 0.0) {
             self.navigationController?.navigationItem.title = "Marvel Character"
@@ -187,19 +201,31 @@ extension MarvelCharactersListViewController: tableViewExtension {
         }
     }
     
-    private func requestCharactersDetail(with characters: Result, info: CharactersInfo) {
-        let charactersDetailViewController = MarvelCharacterDetailViewController(nibName: "MarvelCharacterDetailViewController", bundle: nil)
-        switch info {
-            case .comics:
-                charactersDetailViewController.items = characters.comics
-            case .series:
-                charactersDetailViewController.items = characters.series
-            case .events:
-                charactersDetailViewController.items = characters.events
-            case .none:
-                break
+    /**
+     * @페이징 요청 수신
+     * @creator : coder3306
+     */
+    private func receivePaging() {
+        self.tableMarvelCharacters?.isUserInteractionEnabled = false
+        self.isPaging = true
+        self.tableMarvelCharacters?.reloadSections(IndexSet(integer: 1), with: .none)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.processPaging()
         }
-        self.navigationController?.pushViewController(charactersDetailViewController, animated: true)
+    }
+    
+    /**
+     * @페이징 요청 처리
+     * @creator : coder3306
+     */
+    private func processPaging() {
+        DispatchQueue.main.async {
+            print(" \(self.requestItemCount) 아이템 갯수,  \(self.hasNextPage) 다음페이지 ")
+            self.hasNextPage = self.requestItemCount >= 80 ? false : true
+            self.requestItemCount += 20
+            self.model?.requestCharactersList(for: self.requestItemCount)
+            self.tableMarvelCharacters?.isUserInteractionEnabled = true
+        }
     }
 }
 

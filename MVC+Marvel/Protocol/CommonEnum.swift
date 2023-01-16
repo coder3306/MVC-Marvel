@@ -35,3 +35,21 @@ public enum ApiError: Error {
     }
 }
 
+enum CharactersInfo: Int {
+    case comics = 0
+    case series
+    case events
+    case none
+    
+    init(type: Int) {
+        switch type {
+            case 0: self = .comics
+            case 1: self = .series
+            case 2: self = .events
+            default: self = .none
+        }
+    }
+    var code: Int {
+        return rawValue
+    }
+}

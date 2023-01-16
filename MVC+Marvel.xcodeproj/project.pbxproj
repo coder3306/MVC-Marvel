@@ -16,6 +16,7 @@
 		1966BC08296E98A2004224B3 /* MarvelCharactersLoadingTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1966BC06296E98A2004224B3 /* MarvelCharactersLoadingTableViewCell.xib */; };
 		1966BC0A296E99D4004224B3 /* UITableView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1966BC09296E99D4004224B3 /* UITableView+Extension.swift */; };
 		1984C93A29714E8300FB28BC /* CALayer+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1984C93929714E8300FB28BC /* CALayer+Extension.swift */; };
+		1984C93C2971516A00FB28BC /* MarvelDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1984C93B2971516A00FB28BC /* MarvelDetail.swift */; };
 		19885CCF296D4D0C0010606D /* MarvelCharactersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19885CCD296D4D0C0010606D /* MarvelCharactersTableViewCell.swift */; };
 		19885CD0296D4D0C0010606D /* MarvelCharactersTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19885CCE296D4D0C0010606D /* MarvelCharactersTableViewCell.xib */; };
 		19885CD2296D4D1B0010606D /* CommonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19885CD1296D4D1B0010606D /* CommonTableViewCell.swift */; };
@@ -47,6 +48,7 @@
 		1966BC06296E98A2004224B3 /* MarvelCharactersLoadingTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MarvelCharactersLoadingTableViewCell.xib; sourceTree = "<group>"; };
 		1966BC09296E99D4004224B3 /* UITableView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extension.swift"; sourceTree = "<group>"; };
 		1984C93929714E8300FB28BC /* CALayer+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extension.swift"; sourceTree = "<group>"; };
+		1984C93B2971516A00FB28BC /* MarvelDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarvelDetail.swift; sourceTree = "<group>"; };
 		19885CCD296D4D0C0010606D /* MarvelCharactersTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarvelCharactersTableViewCell.swift; sourceTree = "<group>"; };
 		19885CCE296D4D0C0010606D /* MarvelCharactersTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MarvelCharactersTableViewCell.xib; sourceTree = "<group>"; };
 		19885CD1296D4D1B0010606D /* CommonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTableViewCell.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				19639E4F296FD066006DFBBF /* MarvelCharactersDetailTask.swift */,
+				1984C93B2971516A00FB28BC /* MarvelDetail.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -411,6 +414,7 @@
 				1966BC02296E4D29004224B3 /* CommonConfig.swift in Sources */,
 				1984C93A29714E8300FB28BC /* CALayer+Extension.swift in Sources */,
 				19639E50296FD066006DFBBF /* MarvelCharactersDetailTask.swift in Sources */,
+				1984C93C2971516A00FB28BC /* MarvelDetail.swift in Sources */,
 				19885CDA296D52770010606D /* CommonEnum.swift in Sources */,
 				19917D9D296C0C3C009B39A0 /* AppDelegate.swift in Sources */,
 				19B2BCD2296D4B9200E9CE03 /* MarvelCharactersTask.swift in Sources */,

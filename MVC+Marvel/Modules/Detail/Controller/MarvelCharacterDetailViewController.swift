@@ -8,10 +8,9 @@
 import UIKit
 
 class MarvelCharacterDetailViewController: CommonViewController {
-    private let limit = 20
     var items: Comics?
     var model: MarvelCharactersDetailTaskInput?
-//    private var tableConfig = CommonConfig<T>()
+    private var tableConfig = CommonConfig<MarvelDetail>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +20,7 @@ class MarvelCharacterDetailViewController: CommonViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let url = items?.collectionURI {
-            self.model?.requestDetailList(type: MarvelKeyDecoder.self, url: url, limit: limit)
+            self.model?.requestDetailList(type: MarvelDetail.self, url: url, limit: items?.available ?? 0)
         }
     }
     

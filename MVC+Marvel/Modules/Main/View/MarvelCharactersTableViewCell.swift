@@ -7,25 +7,6 @@
 
 import UIKit
 
-enum CharactersInfo: Int {
-    case comics = 0
-    case series
-    case events
-    case none
-    
-    init(type: Int) {
-        switch type {
-            case 0: self = .comics
-            case 1: self = .series
-            case 2: self = .events
-            default: self = .none
-        }
-    }
-    var code: Int {
-        return rawValue
-    }
-}
-
 class MarvelCharactersTableViewCell: CommonTableViewCell {
     @IBOutlet private weak var imgThumbnail: UIImageView?
     @IBOutlet private weak var lblDescription: UILabel?
@@ -44,7 +25,6 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         detailItemView?.forEach({
-            
             $0.layer.setBorderLayout(radius: 10)
         })
     }
