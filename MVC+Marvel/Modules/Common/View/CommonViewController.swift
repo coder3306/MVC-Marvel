@@ -20,6 +20,7 @@ typealias boolHandler = (Bool) -> ()
 class CommonViewController: UIViewController {
     /// 커스텀 네비게이션 바 초기화
     let customNavigationBar = CustomNavigationBar()
+    var cache = NSCache<NSString, UIImage>()
     
     //******************************************************
     //MARK: - ViewController LifeCycle
@@ -44,6 +45,13 @@ class CommonViewController: UIViewController {
         super.viewDidDisappear(animated)
     }
     
+    override func didReceiveMemoryWarning() {
+        cache.removeAllObjects()
+    }
+    
+    //******************************************************
+    //MARK: - NavigationBar Setting
+    //******************************************************
     public func initNavigationBar(naviItems: NavigationBarItems) {
         /// 기본 네비게이션바 숨기기
         self.navigationController?.navigationBar.isHidden = true

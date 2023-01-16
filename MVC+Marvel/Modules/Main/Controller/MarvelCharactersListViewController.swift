@@ -19,7 +19,6 @@ class MarvelCharactersListViewController: CommonViewController {
     
     private var tableConfig = CommonConfig<Marvel>()
     private var model: MarvelCharactersTaskInput?
-    private var cache = NSCache<NSString, UIImage>()
     private var requestItemCount = 20
     private var isPaging = true
     private var hasNextPage = true
@@ -42,7 +41,6 @@ class MarvelCharactersListViewController: CommonViewController {
         super.viewWillAppear(animated)
         model?.requestCharactersList(for: requestItemCount)
     }
-    
     
     private func setNavigationBar() {
         let naviItems = NavigationBarItems(title: "Marvel Characters")
@@ -86,6 +84,12 @@ class MarvelCharactersListViewController: CommonViewController {
         }
     }
     
+    /**
+     * @캐릭터 상세보기
+     * @creator : coder3306
+     * @param characters : 캐릭터 상세 데이터
+     * @param info : 선택된 캐릭터의 정보
+     */
     private func requestCharactersDetail(with characters: Result, info: CharactersInfo) {
         let charactersDetailViewController = MarvelCharacterDetailViewController(nibName: "MarvelCharacterDetailViewController", bundle: nil)
         var available: Bool?
@@ -108,6 +112,13 @@ class MarvelCharactersListViewController: CommonViewController {
         }
     }
     
+    /**
+     * @상세보기 데이터 검사
+     * @데이터 없을 경우 팝업 노출 설정
+     * @creator : coder3306
+     * @param available : 상세보기 아이템 갯수
+     * @Return : 데이터 유무
+     */
     private func checkEmptyCharactersDetail(_ available: Int) -> Bool {
         if available == 0 {
             self.showAlert()
@@ -116,6 +127,10 @@ class MarvelCharactersListViewController: CommonViewController {
         return true
     }
     
+    /**
+     * @데이터가 없을 시 노출 할 알림 팝업
+     * @creator : coder3306
+     */
     private func showAlert() {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "알림", message: "정보가 없습니다.", preferredStyle: UIAlertController.Style.alert)

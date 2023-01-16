@@ -12,7 +12,7 @@ protocol MarvelCharactersDetailTaskInput {
 }
 
 protocol MarvelCharactersDetailTaskOutput: AnyObject {
-    func responseDetailList<T>(_ item: T)
+    func responseDetailList(_ item: MarvelDetail?)
 }
 
 final class MarvelCharactersDetailTask: MarvelCharactersDetailTaskInput {
@@ -43,9 +43,14 @@ final class MarvelCharactersDetailTask: MarvelCharactersDetailTaskInput {
         NetworkManager.shared.requestData(type: type, param: param) { result in
             switch result {
                 case .success(let t):
-                    self.output?.responseDetailList(t)
+                    if let detail = t as? MarvelDetail {
+                        self.output?.responseDetailList(detail)
+                    } else {
+                        self.output?.responseDetailList(nil)
+                    }
                 case .failure(let apiError):
                     print("Api Call error ------------ >>> \(apiError)")
+                    self.output?.responseDetailList(nil)
             }
         }
     }
