@@ -8,7 +8,11 @@
 import UIKit
 
 class MarvelCharactersListViewController: CommonViewController {
-    @IBOutlet private weak var tableMarvelCharacters: UITableView?
+    @IBOutlet private weak var tableMarvelCharacters: UITableView? {
+        didSet {
+            tableMarvelCharacters?.contentInset = UIEdgeInsets(top: 56, left: 0, bottom: 0, right: 0)
+        }
+    }
     @IBOutlet private weak var loadingIndicator: UIActivityIndicatorView?
     @IBOutlet private weak var viewLoading: UIView?
     @IBOutlet private weak var lblAlertMessage: UILabel?
@@ -37,6 +41,12 @@ class MarvelCharactersListViewController: CommonViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         model?.requestCharactersList(for: requestItemCount)
+    }
+    
+    
+    private func setNavigationBar() {
+        let naviItems = NavigationBarItems(title: "Marvel Characters")
+        initNavigationBar(naviItems: naviItems)
     }
     
     /**
@@ -71,6 +81,7 @@ class MarvelCharactersListViewController: CommonViewController {
             self.tableConfig.cellCount = self.tableConfig.items?.first?.data.results.count ?? 0
             self.tableConfig.calcSectionCount = 2
             self.isPaging = false
+            setNavigationBar()
             self.tableMarvelCharacters?.reloadData()
         }
     }
@@ -92,6 +103,7 @@ class MarvelCharactersListViewController: CommonViewController {
                 break
         }
         if available ?? false {
+            charactersDetailViewController.charactersInfo = info
             self.navigationController?.pushViewController(charactersDetailViewController, animated: true)
         }
     }

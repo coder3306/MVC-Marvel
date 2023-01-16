@@ -18,6 +18,8 @@ typealias dataHandler<T> = (T?) -> ()
 typealias boolHandler = (Bool) -> ()
 
 class CommonViewController: UIViewController {
+    /// 커스텀 네비게이션 바 초기화
+    let customNavigationBar = CustomNavigationBar()
     
     //******************************************************
     //MARK: - ViewController LifeCycle
@@ -40,5 +42,23 @@ class CommonViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+    
+    public func initNavigationBar(naviItems: NavigationBarItems) {
+        /// 기본 네비게이션바 숨기기
+        self.navigationController?.navigationBar.isHidden = true
+        self.customNavigationBar.backgroundColor = .white
+        customNavigationBar.setNavigationBar(naviItems.title, leftBarButton: naviItems.leftBarButton, rightBarButton: naviItems.rightBarButton)
+        customNavigationBar.navigationTitleLabel.font = UIFont.boldSystemFont(ofSize: 17.0)
+        
+        self.view.addSubview(customNavigationBar)
+        customNavigationBar.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(customNavigationBar.containerView)
+        }
+    }
+    
+    @objc func popViewController() {
+        self.navigationController?.popViewController(animated: true)
     }
 }

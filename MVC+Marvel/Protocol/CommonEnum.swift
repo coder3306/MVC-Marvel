@@ -52,4 +52,18 @@ enum CharactersInfo: Int {
     var code: Int {
         return rawValue
     }
+    
+    var title: String {
+        switch self {
+            case .comics:
+                return "Comics"
+            case .series:
+                return "Series"
+            case .events:
+                return "Events"
+            case .none:
+                break
+        }
+        return ""
+    }
 }
