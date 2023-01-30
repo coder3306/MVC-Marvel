@@ -271,8 +271,8 @@
 			isa = PBXGroup;
 			children = (
 				19639E42296FCFDE006DFBBF /* Common */,
-				19639E46296FD031006DFBBF /* Detail */,
 				19B2BCC6296D46E100E9CE03 /* Main */,
+				19639E46296FD031006DFBBF /* Detail */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -280,7 +280,6 @@
 		19B2BCC6296D46E100E9CE03 /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				19B2BCD9296D4C7000E9CE03 /* Common */,
 				19B2BCC0296D460E00E9CE03 /* Controller */,
 				19B2BCBF296D460B00E9CE03 /* View */,
 				19B2BCBE296D460800E9CE03 /* Model */,
@@ -295,13 +294,6 @@
 				19B2BCCA296D478600E9CE03 /* NetworkSetting.swift */,
 			);
 			path = Network;
-			sourceTree = "<group>";
-		};
-		19B2BCD9296D4C7000E9CE03 /* Common */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Common;
 			sourceTree = "<group>";
 		};
 		5CF9B09D2326BA43792539E0 /* Frameworks */ = {

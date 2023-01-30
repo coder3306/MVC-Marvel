@@ -41,9 +41,11 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
             self.imgThumbnail?.image = image
         } else {
             requestImage(url: imageURL) { image in
-                print("Download -------------->>>>> \(image)")
-                self.imgThumbnail?.image = image
-                cache.setObject(image, forKey: imageURL as NSString)
+                print("Download -------------->>>>> \(String(describing: image))")
+                if let image {
+                    self.imgThumbnail?.image = image
+                    cache.setObject(image, forKey: imageURL as NSString)
+                }
             }
         }
     }
@@ -60,7 +62,7 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
 //MARK: - Action
 extension MarvelCharactersTableViewCell {
     @IBAction private func actionSelectCharactersInfo(_ sender: UIButton) {
-        self.selectHandler?(CharactersInfo(type: sender.tag))
+        self.selectHandler?(CharactersInfo(index: sender.tag))
     }
     
     @IBAction private func actionShowDetail(_ sender: UIButton) {

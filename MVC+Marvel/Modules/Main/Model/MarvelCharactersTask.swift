@@ -35,8 +35,8 @@ final class MarvelCharactersTask: MarvelCharactersTaskInput {
         DispatchQueue.main.async {
             NetworkManager.shared.requestData(type: Marvel.self, param: requestMarvelInfo) { [weak self] response in
                 switch response {
-                    case .success(let t):
-                        self?.output?.responseCharactersList(with: t)
+                    case .success(let character):
+                        self?.output?.responseCharactersList(with: character)
                     case .failure(let apiError):
                         print("API ERROR --------------- >>>>>>> \(apiError)")
                         self?.output?.responseCharactersList(with: nil)

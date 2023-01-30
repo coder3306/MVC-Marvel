@@ -12,7 +12,7 @@ class CommonCollectionViewCell: UICollectionViewCell {
         super.awakeFromNib()
     }
     
-    public func requestImage(url: String, complete: @escaping (UIImage) -> ()) {
+    public func requestImage(url: String, complete: @escaping dataHandler<UIImage>) {
         DispatchQueue.global(qos: .background).async {
             NetworkManager.shared.downloadImage(url: url) { image in
                 if let image {

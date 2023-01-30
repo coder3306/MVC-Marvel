@@ -8,6 +8,7 @@
 import UIKit
 
 extension UICollectionViewCell {
+    /// 재사용 셀 식별자
     static var reuseIdentifier: String {
         return String(describing: Self.self)
     }

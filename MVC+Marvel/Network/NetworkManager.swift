@@ -9,6 +9,7 @@ import Foundation
 import Alamofire
 
 final class NetworkManager: NSObject {
+    /// 네트워크 데이터 요청 싱글톤 객체
     static let shared = NetworkManager()
     
     private override init() { }

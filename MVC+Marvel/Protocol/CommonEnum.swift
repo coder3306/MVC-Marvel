@@ -41,8 +41,8 @@ enum CharactersInfo: Int {
     case events
     case none
     
-    init(type: Int) {
-        switch type {
+    init(index: Int) {
+        switch index {
             case 0: self = .comics
             case 1: self = .series
             case 2: self = .events

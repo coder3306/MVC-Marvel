@@ -121,7 +121,7 @@ class MarvelCharactersListViewController: CommonViewController {
      */
     private func checkEmptyCharactersDetail(_ available: Int) -> Bool {
         if available == 0 {
-            self.showAlert()
+            self.emptyDataAlert()
             return false
         }
         return true
@@ -131,7 +131,7 @@ class MarvelCharactersListViewController: CommonViewController {
      * @데이터가 없을 시 노출 할 알림 팝업
      * @creator : coder3306
      */
-    private func showAlert() {
+    private func emptyDataAlert() {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "알림", message: "정보가 없습니다.", preferredStyle: UIAlertController.Style.alert)
             let ok = UIAlertAction(title: "OK", style: .default)
@@ -143,10 +143,6 @@ class MarvelCharactersListViewController: CommonViewController {
 
 //MARK: - tableViewExtension
 extension MarvelCharactersListViewController: tableViewExtension {
-    /**
-     * @테이블뷰 셀 초기화
-     * @creator : coder3306
-     */
     private func initTableViewCell() {
         if let tableView = tableMarvelCharacters {
             MarvelCharactersTableViewCell.registerXib(targetView: tableView)

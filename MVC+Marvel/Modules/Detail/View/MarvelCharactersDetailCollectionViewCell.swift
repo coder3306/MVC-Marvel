@@ -10,7 +10,6 @@ import UIKit
 class MarvelCharactersDetailCollectionViewCell: CommonCollectionViewCell {
     @IBOutlet private weak var imgCharactesDetail: UIImageView?
     @IBOutlet private weak var lblCharactersInfo: UILabel?
-    
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -25,9 +24,11 @@ class MarvelCharactersDetailCollectionViewCell: CommonCollectionViewCell {
             print("Cache Image -------------- >>>>> \(image)")
         } else {
             requestImage(url: imageURL) { image in
-                print("Download -------------->>>>> \(image)")
-                self.imgCharactesDetail?.image = image
-                cache.setObject(image, forKey: imageURL as NSString)
+                if let image {
+                    print("Download -------------->>>>> \(image)")
+                    self.imgCharactesDetail?.image = image
+                    cache.setObject(image, forKey: imageURL as NSString)
+                }
             }
         }
     }
