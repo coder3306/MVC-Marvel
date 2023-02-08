@@ -30,7 +30,7 @@ class MarvelCharacterDetailViewController: CommonViewController {
         super.viewWillAppear(animated)
         setNavigationBar()
         if let url = items?.collectionURI {
-            self.model?.requestDetailList(type: MarvelDetail.self, url: url, limit: items?.available ?? 0)
+            self.model?.requestDetailList(type: MarvelDetail.self, url: url, for: items?.available ?? 0)
         }
     }
     
@@ -43,7 +43,7 @@ class MarvelCharacterDetailViewController: CommonViewController {
     }
     
     private func bindModel() {
-        let model = MarvelCharactersDetailTask()
+        let model = MarvelCharactersDetailTask(networkClient: NetworkManager())
         model.output = self
         self.model = model
     }

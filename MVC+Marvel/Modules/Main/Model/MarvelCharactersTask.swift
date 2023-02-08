@@ -11,38 +11,63 @@ protocol MarvelCharactersTaskInput {
     /**
      * @캐릭터 리스트 요청
      * @creator : coder3306
+     * @param type : 모델 데이터
      * @param limit : 한번에 요청할 데이터 갯수
      */
-    func requestCharactersList(for limit: Int)
+    func requestCharactersList<T: Decodable>(type: T.Type, for limit: Int)
 }
 
 protocol MarvelCharactersTaskOutput: AnyObject {
     /**
-     * @다운로드된 캐릭터 리스트
+     * @캐릭터 리스트 응답 데이터
      * @creator : coder3306
+     * @param characters : 리스트 모델 데이터
      */
-    func responseCharactersList(with characters: Marvel?)
+    func responseCharactersList(_ characters: Marvel?)
 }
 
 final class MarvelCharactersTask: MarvelCharactersTaskInput {
-    
+    /// 응답 데이터 델리게이트 프로토콜 설정
     weak var output: MarvelCharactersTaskOutput?
-    private let url = "http://gateway.marvel.com/v1/public/characters"
+    /// 요청 url 주소
+    private let url: MarvelURL
+    /// 네트워크 설정
+    private let networkClient: NetworkClient
     
-    func requestCharactersList(for limit: Int) {
-        var parameter = NetworkParameters(url: url, method: .get)
+    /**
+     * @비즈니스 로직 초기화
+     * @creator : coder3306
+     * @param networkClient : 네트워크 설정 프로토콜
+     * @param url : 요청 URL 주소
+     */
+    init(networkClient: NetworkClient, url: MarvelURL) {
+        self.networkClient = networkClient
+        self.url = url
+    }
+    
+    /**
+     * @캐릭터 리스트 요청
+     * @creator : coder3306
+     * @param type : 모델 데이터
+     * @param limit : 한번에 호출할 데이터 갯수 설정
+     * @Return : Output으로 매핑 처리된 데이터 전달
+     */
+    func requestCharactersList<T: Decodable>(type: T.Type, for limit: Int) {
+        var parameter = NetworkParameters(url: url.resource, method: .get)
         guard let requestMarvelInfo = parameter.getMarvelData(limit) else { return }
-        DispatchQueue.main.async {
-            NetworkManager.shared.requestData(type: Marvel.self, param: requestMarvelInfo) { [weak self] response in
-                switch response {
-                    case .success(let character):
-                        self?.output?.responseCharactersList(with: character)
-                    case .failure(let apiError):
-                        print("API ERROR --------------- >>>>>>> \(apiError)")
-                        self?.output?.responseCharactersList(with: nil)
-                }
+        
+        networkClient.requestData(param: requestMarvelInfo) { [weak self] result in
+            switch result {
+                case let .success(data):
+                    if let parsing = try? JSONDecoder().decode(type, from: data) {
+                        self?.output?.responseCharactersList(parsing as? Marvel ?? nil)
+                        return
+                    }
+                    self?.output?.responseCharactersList(nil)
+                case let .failure(apiError):
+                    print("Api Call error ------------ >>> \(apiError)")
+                    self?.output?.responseCharactersList(nil)
             }
         }
-        print("RequestItem")
     }
 }

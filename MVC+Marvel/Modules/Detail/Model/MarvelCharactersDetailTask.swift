@@ -8,26 +8,38 @@
 import Foundation
 
 protocol MarvelCharactersDetailTaskInput {
-    func requestDetailList<T: Decodable>(type: T.Type, url: String, limit: Int)
+    /**
+     * @캐릭터 상세보기 데이터 요청
+     * @creator : coder3306
+     * @param type : 모델 데이터
+     * @param limit : 한번에 요청할 데이터 갯수
+     */
+    func requestDetailList<T: Decodable>(type: T.Type, url: String, for limit: Int)
 }
 
 protocol MarvelCharactersDetailTaskOutput: AnyObject {
+    /**
+     * @캐릭터 상세보기 응답 데이터
+     * @creator : coder3306
+     * @param item : 상세보기 모델 데이터
+     */
     func responseDetailList(_ item: MarvelDetail?)
 }
 
+//MARK: Business Logic
 final class MarvelCharactersDetailTask: MarvelCharactersDetailTaskInput {
+    // 네트워크 설정
+    private let networkClient : NetworkClient
+    // 데이터 전달 프로토콜 델리게이트 설정
     weak var output: MarvelCharactersDetailTaskOutput?
     
     /**
-     * @네트워크 파라미터 초기화
+     * @비즈니스 로직 초기화
      * @creator : coder3306
-     * @param url : 호출할 URL 주소
-     * @param limit : 한번에 호출할 데이터 갯수 설정
-     * @Return : 설정된 파라미터 반환
+     * @param networkClient : 네트워크 설정 프로토콜
      */
-    private func initNetworkParameter(url: String, limit: Int) -> NetworkParameters? {
-        var parameter = NetworkParameters(url: url, method: .get)
-        return parameter.getMarvelData(limit)
+    init(networkClient: NetworkClient) {
+        self.networkClient = networkClient
     }
     
     /**
@@ -38,19 +50,20 @@ final class MarvelCharactersDetailTask: MarvelCharactersDetailTaskInput {
      * @param limit : 한번에 호출할 데이터 갯수 설정
      * @Return : Output으로 데이터 전달
      */
-    func requestDetailList<T: Decodable>(type: T.Type, url: String, limit: Int) {
-        guard let param = initNetworkParameter(url: url, limit: limit) else { return }
-        NetworkManager.shared.requestData(type: type, param: param) { result in
+    func requestDetailList<T: Decodable>(type: T.Type, url: String, for limit: Int) {
+        var parameter = NetworkParameters(url: url, method: .get)
+        guard let detailParameter = parameter.getMarvelData(limit) else { return }
+        networkClient.requestData(param: detailParameter) { [weak self] result in
             switch result {
-                case .success(let t):
-                    if let detail = t as? MarvelDetail {
-                        self.output?.responseDetailList(detail)
-                    } else {
-                        self.output?.responseDetailList(nil)
+                case let .success( t):
+                    if let parsing = try? JSONDecoder().decode(type, from: t) {
+                        self?.output?.responseDetailList(parsing as? MarvelDetail ?? nil)
+                        return
                     }
-                case .failure(let apiError):
+                    self?.output?.responseDetailList(nil)
+                case let .failure( apiError):
                     print("Api Call error ------------ >>> \(apiError)")
-                    self.output?.responseDetailList(nil)
+                    self?.output?.responseDetailList(nil)
             }
         }
     }

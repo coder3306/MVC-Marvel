@@ -9,6 +9,8 @@ import UIKit
 
 class CommonTableViewCell: UITableViewCell {
     
+//    private var networkClient: NetworkClient?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
     }
@@ -18,12 +20,12 @@ class CommonTableViewCell: UITableViewCell {
     }
     
     public func requestImage(url: String, complete: @escaping dataHandler<UIImage>) {
-        DispatchQueue.global(qos: .background).async {
-            NetworkManager.shared.downloadImage(url: url) { image in
-                if let image {
-                    complete(image)
-                }
-            }
-        }
+//        DispatchQueue.global(qos: .background).async {
+//            NetworkManager.shared.downloadImage(url: url) { image in
+//                if let image {
+//                    complete(image)
+//                }
+//            }
+//        }
     }
 }

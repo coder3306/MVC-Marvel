@@ -8,12 +8,11 @@
 import Foundation
 import Alamofire
 
-final class NetworkManager: NSObject {
-    /// 네트워크 데이터 요청 싱글톤 객체
-    static let shared = NetworkManager()
-    
-    private override init() { }
-    
+protocol NetworkClient {
+    func requestData(param: NetworkParameters, completion: @escaping (ApiResult<Data>) -> ())
+}
+
+final class NetworkManager: NetworkClient {
     /**
      * @서버의 데이터를 요청합니다.
      * @creator : coder3306
@@ -21,7 +20,7 @@ final class NetworkManager: NSObject {
      * @param param : Alamofire Request 파라미터 설정
      * @Return : 성공 -> 매핑된 데이터 클로저 반환, 실패 -> 에러타입 반환
      */
-    public func requestData<T: Decodable>(type: T.Type, param: NetworkParameters, complete: @escaping (ApiResult<T>) -> Void) {
+    public func requestData(param: NetworkParameters, completion: @escaping (ApiResult<Data>) -> ()) {
         AF.request(param.url
                   , method: param.method
                   , parameters: param.parameter
@@ -29,14 +28,10 @@ final class NetworkManager: NSObject {
             
             switch response.result {
             case let .success(data):
-                if let json = try? JSONDecoder().decode(type, from: data) {
-                    complete(.success(json))
-                    return
-                }
-                complete(.failure(ApiError.encodingError))
+                completion(.success(data))
             case let .failure(error):
                 print("Alamofire Error --------------------> \(error)")
-                complete(.failure(ApiError.statusCodeError))
+                completion(.failure(ApiError.statusCodeError))
             }
         }
     }

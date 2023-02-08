@@ -23,12 +23,6 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="chH-mV-gyo">
                                 <rect key="frame" x="0.0" y="0.0" width="454" height="158"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3vQ-vS-WA2">
-                                        <rect key="frame" x="15" y="15" width="138" height="138"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="3vQ-vS-WA2" secondAttribute="height" id="UXD-Z3-aMJ"/>
-                                        </constraints>
-                                    </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RXq-yo-0LI">
                                         <rect key="frame" x="161" y="15.000000000000002" width="47" height="21.666666666666671"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
@@ -41,6 +35,13 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3vQ-vS-WA2">
+                                        <rect key="frame" x="15" y="15" width="138" height="138"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="3vQ-vS-WA2" secondAttribute="height" id="UXD-Z3-aMJ"/>
+                                            <constraint firstAttribute="width" priority="999" constant="138" id="xvr-M3-HrX"/>
+                                        </constraints>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>

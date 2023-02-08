@@ -8,28 +8,49 @@
 import UIKit
 
 class MarvelCharactersListViewController: CommonViewController {
+    //******************************************************
+    //MARK: - IBOutlet Properties
+    //******************************************************
+    /// 캐릭터 리스트 테이블 뷰
     @IBOutlet private weak var tableMarvelCharacters: UITableView? {
         didSet {
             tableMarvelCharacters?.contentInset = UIEdgeInsets(top: 56, left: 0, bottom: 0, right: 0)
         }
     }
+    /// 로딩 인디케이터
     @IBOutlet private weak var loadingIndicator: UIActivityIndicatorView?
+    /// 로딩 뷰
     @IBOutlet private weak var viewLoading: UIView?
+    /// 로딩 상태 알림
     @IBOutlet private weak var lblAlertMessage: UILabel?
     
+    //******************************************************
+    //MARK: - Properties
+    //******************************************************
+    /// 테이블뷰 설정정보
     private var tableConfig = CommonConfig<Marvel>()
+    /// 비즈니스 로직 모델
     private var model: MarvelCharactersTaskInput?
+    /// 최대 요청 수량
     private var requestItemCount = 20
+    /// 현재 페이징중인지 여부
     private var isPaging = true
+    /// 다음페이지가 있는지 여부
     private var hasNextPage = true
+    /// 현재 셀 확장여부 상태 저장 리스트
     private var isExpandView = [Bool]()
+    /// 노출된 셀 높이저장 리스트
     private var cellHeights = [IndexPath: CGFloat]()
+    /// 네트워크 로딩상태 열거
     private var state: State = .loading {
         didSet {
             setLoadingView(state: self.state)
         }
     }
     
+    //******************************************************
+    //MARK: - ViewController LifeCycle
+    //******************************************************
     override func viewDidLoad() {
         super.viewDidLoad()
         initTableViewCell()
@@ -39,9 +60,16 @@ class MarvelCharactersListViewController: CommonViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        model?.requestCharactersList(for: requestItemCount)
+        model?.requestCharactersList(type: Marvel.self, for: requestItemCount)
     }
     
+    //******************************************************
+    //MARK: - Instance
+    //******************************************************
+    /**
+     * @네비게이션 바 설정
+     * @creator : coder3306
+     */
     private func setNavigationBar() {
         let naviItems = NavigationBarItems(title: "Marvel Characters")
         initNavigationBar(naviItems: naviItems)
@@ -52,7 +80,7 @@ class MarvelCharactersListViewController: CommonViewController {
      * @creator : coder3306
      */
     private func bindModel() {
-        let model = MarvelCharactersTask()
+        let model = MarvelCharactersTask(networkClient: NetworkManager(), url: MarvelURL.characterList)
         model.output = self
         self.model = model
     }
@@ -143,6 +171,10 @@ class MarvelCharactersListViewController: CommonViewController {
 
 //MARK: - tableViewExtension
 extension MarvelCharactersListViewController: tableViewExtension {
+    /**
+     * @테이블뷰 셀 초기화
+     * @creator : coder3306
+     */
     private func initTableViewCell() {
         if let tableView = tableMarvelCharacters {
             MarvelCharactersTableViewCell.registerXib(targetView: tableView)
@@ -178,7 +210,6 @@ extension MarvelCharactersListViewController: tableViewExtension {
                         }
                     }
                     cell.didSelectDetail { [weak self] isSelected in
-                        //FIXME: - 셀 확장 시 버튼 클릭하면 인덱스 오류 발생
                         print("확장 셀 인덱스 --------- >>> \(indexPath.row) 확장 상태 ---------- >>> \(isSelected)")
                         self?.tableMarvelCharacters?.performBatchUpdates({
                             self?.isExpandView[indexPath.row] = !isSelected
@@ -246,7 +277,7 @@ extension MarvelCharactersListViewController: tableViewExtension {
             print(" \(self.requestItemCount) 아이템 갯수,  \(self.hasNextPage) 다음페이지 ")
             self.hasNextPage = self.requestItemCount >= 80 ? false : true
             self.requestItemCount += 20
-            self.model?.requestCharactersList(for: self.requestItemCount)
+            self.model?.requestCharactersList(type: Marvel.self, for: self.requestItemCount)
             self.tableMarvelCharacters?.isUserInteractionEnabled = true
         }
     }
@@ -259,7 +290,7 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput {
      * @creator : coder3306
      * @param characters : 캐릭터 리스트
      */
-    func responseCharactersList(with characters: Marvel?) {
+    func responseCharactersList(_ characters: Marvel?) {
         if let characters {
             self.tableConfig.items = [characters]
             let count = (characters.data.results.count != requestItemCount) ? (characters.data.results.count - requestItemCount) : requestItemCount

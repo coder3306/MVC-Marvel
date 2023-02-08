@@ -14,7 +14,7 @@ public enum State {
 }
 
 public struct CommonConfig<T> {
-    // 모델 매핑된 데이터
+    // 매핑된 모델 데이터
     var items: [T]?
     // 셀 섹션 갯수
     lazy var sectionCount = 1
