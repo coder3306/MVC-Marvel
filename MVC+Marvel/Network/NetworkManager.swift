@@ -24,14 +24,15 @@ final class NetworkManager: NetworkClient {
         AF.request(param.url
                   , method: param.method
                   , parameters: param.parameter
-                  , headers: param.header).responseData { response in
-            
+                  , headers: param.header)
+        .validate()
+        .responseData { response in
             switch response.result {
             case let .success(data):
                 completion(.success(data))
             case let .failure(error):
                 print("Alamofire Error --------------------> \(error)")
-                completion(.failure(ApiError.statusCodeError))
+                completion(.failure(.statusCodeError))
             }
         }
     }

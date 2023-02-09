@@ -43,27 +43,31 @@ final class MarvelCharactersDetailTask: MarvelCharactersDetailTaskInput {
     }
     
     /**
-     * @캐릭터 상세보기 이벤트 데이터 호출
+     * @캐릭터 상세보기 이벤트 데이터 요청
      * @creator : coder3306
      * @param type : 모델 데이터
      * @param url : 호출할 URL 설정
      * @param limit : 한번에 호출할 데이터 갯수 설정
      * @Return : Output으로 데이터 전달
      */
+    
     func requestDetailList<T: Decodable>(type: T.Type, url: String, for limit: Int) {
         var parameter = NetworkParameters(url: url, method: .get)
-        guard let detailParameter = parameter.getMarvelData(limit) else { return }
-        networkClient.requestData(param: detailParameter) { [weak self] result in
+        guard let requestMarvelInfo = parameter.getMarvelData(limit) else { return }
+
+        networkClient.requestData(param: requestMarvelInfo) { [weak self] result in
             switch result {
-                case let .success( t):
-                    if let parsing = try? JSONDecoder().decode(type, from: t) {
-                        self?.output?.responseDetailList(parsing as? MarvelDetail ?? nil)
-                        return
+                case .success(let data):
+                    do {
+                        let parsing = try JSONDecoder().decode(type, from: data)
+                        self?.output?.responseDetailList(parsing as? MarvelDetail)
+                    } catch {
+                        self?.output?.responseDetailList(nil)
+                        print("JSON Decoding error ------------ >>> \(error)")
                     }
+                case .failure(let apiError):
                     self?.output?.responseDetailList(nil)
-                case let .failure( apiError):
                     print("Api Call error ------------ >>> \(apiError)")
-                    self?.output?.responseDetailList(nil)
             }
         }
     }

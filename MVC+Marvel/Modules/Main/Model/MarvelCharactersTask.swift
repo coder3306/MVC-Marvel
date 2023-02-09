@@ -55,18 +55,20 @@ final class MarvelCharactersTask: MarvelCharactersTaskInput {
     func requestCharactersList<T: Decodable>(type: T.Type, for limit: Int) {
         var parameter = NetworkParameters(url: url.resource, method: .get)
         guard let requestMarvelInfo = parameter.getMarvelData(limit) else { return }
-        
+
         networkClient.requestData(param: requestMarvelInfo) { [weak self] result in
             switch result {
-                case let .success(data):
-                    if let parsing = try? JSONDecoder().decode(type, from: data) {
-                        self?.output?.responseCharactersList(parsing as? Marvel ?? nil)
-                        return
+                case .success(let data):
+                    do {
+                        let parsing = try JSONDecoder().decode(type, from: data)
+                        self?.output?.responseCharactersList(parsing as? Marvel)
+                    } catch {
+                        self?.output?.responseCharactersList(nil)
+                        print("JSON Decoding error ------------ >>> \(error)")
                     }
+                case .failure(let apiError):
                     self?.output?.responseCharactersList(nil)
-                case let .failure(apiError):
                     print("Api Call error ------------ >>> \(apiError)")
-                    self?.output?.responseCharactersList(nil)
             }
         }
     }

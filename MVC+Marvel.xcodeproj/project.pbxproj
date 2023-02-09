@@ -35,7 +35,6 @@
 		199DF7AC2974E91300CE7378 /* MarvelCharactersDetailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 199DF7AA2974E91300CE7378 /* MarvelCharactersDetailCollectionViewCell.xib */; };
 		199DF7AE2974EB1000CE7378 /* CommonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199DF7AD2974EB1000CE7378 /* CommonCollectionViewCell.swift */; };
 		199DF7B02974ED3600CE7378 /* UICollectionViewCell+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199DF7AF2974ED3600CE7378 /* UICollectionViewCell+Extension.swift */; };
-		19A766582991DF8A00F750DA /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A766572991DF8A00F750DA /* LoginViewController.swift */; };
 		19ACA95429938DFE00E4802C /* MarvelURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19ACA95329938DFE00E4802C /* MarvelURL.swift */; };
 		19B2BCC9296D46FA00E9CE03 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B2BCC8296D46FA00E9CE03 /* NetworkManager.swift */; };
 		19B2BCCB296D478600E9CE03 /* NetworkSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19B2BCCA296D478600E9CE03 /* NetworkSetting.swift */; };
@@ -76,7 +75,6 @@
 		199DF7AA2974E91300CE7378 /* MarvelCharactersDetailCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MarvelCharactersDetailCollectionViewCell.xib; sourceTree = "<group>"; };
 		199DF7AD2974EB1000CE7378 /* CommonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonCollectionViewCell.swift; sourceTree = "<group>"; };
 		199DF7AF2974ED3600CE7378 /* UICollectionViewCell+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionViewCell+Extension.swift"; sourceTree = "<group>"; };
-		19A766572991DF8A00F750DA /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		19ACA95329938DFE00E4802C /* MarvelURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarvelURL.swift; sourceTree = "<group>"; };
 		19B2BCC8296D46FA00E9CE03 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		19B2BCCA296D478600E9CE03 /* NetworkSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSetting.swift; sourceTree = "<group>"; };
@@ -206,7 +204,6 @@
 				19B2BCC5296D46D500E9CE03 /* Modules */,
 				19917D9C296C0C3C009B39A0 /* AppDelegate.swift */,
 				19917DA0296C0C3C009B39A0 /* ViewController.swift */,
-				19A766572991DF8A00F750DA /* LoginViewController.swift */,
 				19917DA2296C0C3C009B39A0 /* Main.storyboard */,
 				19917DA8296C0C3C009B39A0 /* Assets.xcassets */,
 				19917DAA296C0C3C009B39A0 /* LaunchScreen.storyboard */,
@@ -456,7 +453,6 @@
 				19B2BCD4296D4C4800E9CE03 /* Marvel.swift in Sources */,
 				19885CD2296D4D1B0010606D /* CommonTableViewCell.swift in Sources */,
 				19B2BCCB296D478600E9CE03 /* NetworkSetting.swift in Sources */,
-				19A766582991DF8A00F750DA /* LoginViewController.swift in Sources */,
 				19885CDE296D58E80010606D /* String+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
