@@ -29,8 +29,10 @@ class MarvelCharactersListViewController: CommonViewController {
     //******************************************************
     /// 테이블뷰 설정정보
     private var tableConfig = CommonConfig<Marvel>()
-    /// 비즈니스 로직 모델
-    private var model: MarvelCharactersTaskInput?
+    /// 캐릭터 리스트 비즈니스 로직
+    private var charactersTask: MarvelCharactersTaskInput?
+    /// 이미지 비즈니스 로직
+    private var imageTask: ImageTaskInput?
     /// 최대 요청 수량
     private var requestItemCount = 20
     /// 현재 페이징중인지 여부
@@ -41,6 +43,8 @@ class MarvelCharactersListViewController: CommonViewController {
     private var isExpandView = [Bool]()
     /// 노출된 셀 높이저장 리스트
     private var cellHeights = [IndexPath: CGFloat]()
+    /// 이미지 셀 인덱스 저장
+    private var indexPathsForImageCells = [String]()
     /// 네트워크 로딩상태 열거
     private var state: State = .loading {
         didSet {
@@ -60,7 +64,7 @@ class MarvelCharactersListViewController: CommonViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        model?.requestCharactersList(type: Marvel.self, for: requestItemCount)
+        charactersTask?.requestCharactersList(type: Marvel.self, for: requestItemCount)
     }
     
     //******************************************************
@@ -80,9 +84,13 @@ class MarvelCharactersListViewController: CommonViewController {
      * @creator : coder3306
      */
     private func bindModel() {
-        let model = MarvelCharactersTask(networkClient: NetworkManager(), url: MarvelURL.characterList)
-        model.output = self
-        self.model = model
+        let characters = MarvelCharactersTask(networkClient: NetworkManager(), url: MarvelURL.characterList)
+        characters.output = self
+        self.charactersTask = characters
+        
+        let image = ImageProvider(imageClient: NetworkManager())
+        image.output = self
+        self.imageTask = image
     }
     
     /**
@@ -91,9 +99,10 @@ class MarvelCharactersListViewController: CommonViewController {
      * @param state : 현재 데이터 수신 상태(로딩/완료/에러)
      */
     private func setLoadingView(state: State) {
+        self.tableMarvelCharacters?.alpha = (state == .loading || state == .error) ? 0.0 : 1.0
+        self.viewLoading?.alpha = (state == .loading || state == .error) ? 1.0 : 0.0
         UIView.animate(withDuration: 0.3) {
-            self.tableMarvelCharacters?.alpha = (state == .loading || state == .error) ? 0.0 : 1.0
-            self.viewLoading?.alpha = (state == .loading || state == .error) ? 1.0 : 0.0
+            self.view.layoutIfNeeded()
         }
         self.lblAlertMessage?.text = (state == .loading) ? "로딩중 입니다." : "오류 발생"
         self.lblAlertMessage?.isHidden = (state == .loading || state == .error) ? false : true
@@ -120,21 +129,20 @@ class MarvelCharactersListViewController: CommonViewController {
      */
     private func requestCharactersDetail(with characters: Result, info: CharactersInfo) {
         let charactersDetailViewController = MarvelCharacterDetailViewController(nibName: "MarvelCharacterDetailViewController", bundle: nil)
-        var available: Bool?
+        var items: Comics?
         switch info {
             case .comics:
-                available = checkEmptyCharactersDetail(characters.comics.available)
-                charactersDetailViewController.items = characters.comics
+                items = characters.comics
             case .series:
-                available = checkEmptyCharactersDetail(characters.series.available)
-                charactersDetailViewController.items = characters.series
+                items = characters.series
             case .events:
-                available = checkEmptyCharactersDetail(characters.events.available)
-                charactersDetailViewController.items = characters.events
+                items = characters.events
             case .none:
                 break
         }
-        if available ?? false {
+
+        if let items = items, checkEmptyCharactersDetail(items.available) {
+            charactersDetailViewController.items = items
             charactersDetailViewController.charactersInfo = info
             self.navigationController?.pushViewController(charactersDetailViewController, animated: true)
         }
@@ -182,6 +190,9 @@ extension MarvelCharactersListViewController: tableViewExtension {
         }
     }
     
+    //******************************************************
+    //MARK: - TableView Setting
+    //******************************************************
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -201,7 +212,8 @@ extension MarvelCharactersListViewController: tableViewExtension {
         if indexPath.section == 0 {
             if let cell = tableView.dequeueReusableCell(withIdentifier: listIdentifier, for: indexPath) as? MarvelCharactersTableViewCell {
                 if let item = tableConfig.items?.first?.data.results[indexPath.row] {
-                    cell.setData(item, with: cache)
+                    let cachedImage = cache.object(forKey: item.thumbnail.thumbnailURL as NSString)
+                    cell.setData(item, image: cachedImage)
                     cell.detailView?.isHidden = isExpandView[indexPath.row]
                     cell.didSelectCharactersInfo { [weak self] info in
                         print("인덱스 ---------- >>>>>> \(indexPath.row) 선택된 코드 ------------ >>>>>> \(info?.code ?? 0)")
@@ -245,9 +257,6 @@ extension MarvelCharactersListViewController: tableViewExtension {
     //MARK: - Paging
     //******************************************************
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y > (self.navigationController?.navigationBar.frame.size.height ?? 0.0) {
-            self.navigationController?.navigationItem.title = "Marvel Character"
-        }
         if scrollView.contentOffset.y > (scrollView.contentSize.height - scrollView.frame.height) {
             if isPaging == false && hasNextPage {
                 receivePaging()
@@ -277,14 +286,14 @@ extension MarvelCharactersListViewController: tableViewExtension {
             print(" \(self.requestItemCount) 아이템 갯수,  \(self.hasNextPage) 다음페이지 ")
             self.hasNextPage = self.requestItemCount >= 80 ? false : true
             self.requestItemCount += 20
-            self.model?.requestCharactersList(type: Marvel.self, for: self.requestItemCount)
+            self.charactersTask?.requestCharactersList(type: Marvel.self, for: self.requestItemCount)
             self.tableMarvelCharacters?.isUserInteractionEnabled = true
         }
     }
 }
 
 //MARK: - Output
-extension MarvelCharactersListViewController: MarvelCharactersTaskOutput {
+extension MarvelCharactersListViewController: MarvelCharactersTaskOutput, ImageTaskOutput {
     /**
      * @요청된 캐릭터 리스트 저장 및 UI 업데이트
      * @creator : coder3306
@@ -294,13 +303,45 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput {
         if let characters {
             self.tableConfig.items = [characters]
             let count = (characters.data.results.count != requestItemCount) ? (characters.data.results.count - requestItemCount) : requestItemCount
+            // 셀 확장상태 초기화
             for _ in 0 ..< count {
                 self.isExpandView.append(true)
             }
+            // 이미지 다운로드 요청
+            characters.data.results.forEach({
+                indexPathsForImageCells.append($0.thumbnail.thumbnailURL)
+                self.imageTask?.requestImage(from: $0.thumbnail.thumbnailURL)
+            })
             self.state = .ready
         } else {
             self.tableConfig.items = nil
             self.state = .error
+        }
+    }
+
+    /**
+     * @요청된 캐릭터 이미지 캐싱처리
+     * @creator : coder3306
+     * @param image : 요청된 이미지
+     * @param urlString : 이미지 다운로드 주소
+     */
+    func responseImage(_ image: UIImage?, to urlString: String) {
+        if let image {
+            cache.setObject(image, forKey: urlString as NSString)
+            self.updateImageCell(to: image, for: urlString)
+        }
+    }
+    
+    /**
+     * @요청된 캐릭터 이미지 재사용 설정
+     * @creator : coder3306
+     * @param image : 다운로드된 이미지
+     * @param urlString : 이미지 주소
+     */
+    func updateImageCell(to image: UIImage?, for urlString: String) {
+        let index = indexPathsForImageCells.firstIndex(of: urlString) ?? 0
+        if let cell = self.tableMarvelCharacters?.cellForRow(at: IndexPath(row: index, section: 0)) as? MarvelCharactersTableViewCell {
+            cell.imgThumbnail?.image = image
         }
     }
 }

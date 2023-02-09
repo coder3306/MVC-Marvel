@@ -12,7 +12,11 @@ protocol NetworkClient {
     func requestData(param: NetworkParameters, completion: @escaping (ApiResult<Data>) -> ())
 }
 
-final class NetworkManager: NetworkClient {
+protocol ImageClient {
+    func downloadImage(from urlString: String, completion: @escaping dataHandler<UIImage>)
+}
+
+final class NetworkManager: NetworkClient, ImageClient {
     /**
      * @서버의 데이터를 요청합니다.
      * @creator : coder3306
@@ -28,9 +32,9 @@ final class NetworkManager: NetworkClient {
         .validate()
         .responseData { response in
             switch response.result {
-            case let .success(data):
+            case .success(let data):
                 completion(.success(data))
-            case let .failure(error):
+            case .failure(let error):
                 print("Alamofire Error --------------------> \(error)")
                 completion(.failure(.statusCodeError))
             }
@@ -43,19 +47,21 @@ final class NetworkManager: NetworkClient {
      * @param url : 이미지 다운로드 주소
      * @Return : 다운로드된 이미지 반환
      */
-    public func downloadImage(url: String, complete: @escaping (UIImage?) -> ()) {
-        AF.request(url, method: .get, parameters: nil, interceptor: nil).validate().responseData { response in
-            switch response.result {
-                case let .success(data):
-                    if let image = UIImage(data: data) {
-                        complete(image)
-                        return
-                    }
-                    complete(nil)
-                case let .failure(error):
-                    complete(nil)
-                    print(error)
-            }
+    public func downloadImage(from urlString: String, completion: @escaping dataHandler<UIImage>) {
+        AF.request(urlString, method: .get)
+            .validate()
+            .responseData { response in
+                switch response.result {
+                    case .success(let data):
+                        if let image = UIImage(data: data) {
+                            completion(image)
+                            return
+                        }
+                        completion(nil)
+                    case .failure(let error):
+                        completion(nil)
+                        print(error)
+                }
         }
     }
 }

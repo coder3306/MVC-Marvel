@@ -27,7 +27,7 @@ protocol MarvelCharactersTaskOutput: AnyObject {
 }
 
 final class MarvelCharactersTask: MarvelCharactersTaskInput {
-    /// 응답 데이터 델리게이트 프로토콜 설정
+    /// 응답 데이터 델리게이트 프로토콜
     weak var output: MarvelCharactersTaskOutput?
     /// 요청 url 주소
     private let url: MarvelURL

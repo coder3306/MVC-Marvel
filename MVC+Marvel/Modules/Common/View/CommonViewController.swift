@@ -20,6 +20,7 @@ typealias boolHandler = (Bool) -> ()
 class CommonViewController: UIViewController {
     /// 커스텀 네비게이션 바 초기화
     let customNavigationBar = CustomNavigationBar()
+    /// 이미지 캐시
     var cache = NSCache<NSString, UIImage>()
     
     //******************************************************
@@ -38,6 +39,7 @@ class CommonViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        cache.removeAllObjects()
         super.viewWillDisappear(animated)
     }
     

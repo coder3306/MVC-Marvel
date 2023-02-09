@@ -39,7 +39,7 @@
                                         <rect key="frame" x="15" y="15" width="138" height="138"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="3vQ-vS-WA2" secondAttribute="height" id="UXD-Z3-aMJ"/>
-                                            <constraint firstAttribute="width" priority="999" constant="138" id="xvr-M3-HrX"/>
+                                            <constraint firstAttribute="width" constant="138" id="xvr-M3-HrX"/>
                                         </constraints>
                                     </imageView>
                                 </subviews>
