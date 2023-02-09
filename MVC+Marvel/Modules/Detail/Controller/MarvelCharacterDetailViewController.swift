@@ -8,18 +8,30 @@
 import UIKit
 
 class MarvelCharacterDetailViewController: CommonViewController {
+    /// 캐릭터 상세보기 컬렉션 뷰
     @IBOutlet private weak var collectionCharactersDetail: UICollectionView? {
         didSet {
             collectionCharactersDetail?.contentInset = UIEdgeInsets(top: 56, left: 0, bottom: 0, right: 0)
         }
     }
     
+    //******************************************************
+    //MARK: - Properties
+    //******************************************************
+    /// 상세보기 데이터
     var items: Comics?
+    /// 상세보기 캐릭터 정보
     var charactersInfo: CharactersInfo?
+    /// 모델 데이터
     private var model: MarvelCharactersDetailTaskInput?
+    /// 테이블뷰 설정 정보 초기화
     private var tableConfig = CommonConfig<MarvelDetail>()
+    /// 컬렉션뷰 섹션 여백 설정
     private let sectionInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     
+    //******************************************************
+    //MARK: - ViewController LifeCycle
+    //******************************************************
     override func viewDidLoad() {
         super.viewDidLoad()
         initCollectionViewcell()
@@ -34,6 +46,13 @@ class MarvelCharacterDetailViewController: CommonViewController {
         }
     }
     
+    //******************************************************
+    //MARK: - Instance
+    //******************************************************
+    /**
+     * @네비게이션 바 설정
+     * @creator : coder3306
+     */
     private func setNavigationBar() {
         let btn = UIButton(type: .custom)
         btn.setImage(UIImage(systemName: "chevron.left"), for: .normal)
@@ -42,6 +61,10 @@ class MarvelCharacterDetailViewController: CommonViewController {
         initNavigationBar(naviItems: naviItems)
     }
     
+    /**
+     * @모델 바인딩
+     * @creator : coder3306
+     */
     private func bindModel() {
         let model = MarvelCharactersDetailTask(networkClient: NetworkManager())
         model.output = self
@@ -51,12 +74,19 @@ class MarvelCharacterDetailViewController: CommonViewController {
 
 //MARK: - collectionViewExtension
 extension MarvelCharacterDetailViewController: collectionViewExtension {
+    /**
+     * @테이블뷰 셀 초기화
+     * @creator : coder3306
+     */
     private func initCollectionViewcell() {
         if let collectionCharactersDetail {
             MarvelCharactersDetailCollectionViewCell.registerXib(targetView: collectionCharactersDetail)
         }
     }
     
+    //******************************************************
+    //MARK: - TableView Setting
+    //******************************************************
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return tableConfig.cellCount
     }
@@ -91,6 +121,11 @@ extension MarvelCharacterDetailViewController: collectionViewExtension {
 
 //MARK: - Output
 extension MarvelCharacterDetailViewController: MarvelCharactersDetailTaskOutput {
+    /**
+     * @캐릭터 상세보기 데이터 저장 및 UI 업데이트
+     * @creator : coder3306
+     * @param item : 캐릭터 상세정보
+     */
     func responseDetailList(_ item: MarvelDetail?) {
         if let item {
             self.tableConfig.items = [item]
