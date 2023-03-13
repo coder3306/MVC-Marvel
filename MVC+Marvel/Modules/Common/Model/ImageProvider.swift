@@ -45,8 +45,21 @@ final class ImageProvider: ImageTaskInput {
      */
     func requestImage(from urlString: String) {
         DispatchQueue.global(qos: .background).async {
-            self.imageClient.downloadImage(from: urlString) { [weak self] image in
-                self?.output?.responseImage(image, to: urlString)
+            self.imageClient.downloadImage(from: urlString) { [weak self] result in
+                
+                switch result {
+                    case .success(let data):
+                        do {
+                            if let image = UIImage(data: data) {
+                                self?.output?.responseImage(image, to: urlString)
+                            }
+                        } catch {
+                            self?.output?.responseImage(nil, to: "")
+                        }
+                    case .failure(let apiError):
+                        self?.output?.responseImage(nil, to: "")
+                        print("Api Call error ------------ >>> \(apiError)")
+                }
             }
         }
     }

@@ -41,8 +41,9 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
     //******************************************************
     override func awakeFromNib() {
         super.awakeFromNib()
+        detailView?.isHidden = true
         detailItemView?.forEach({
-            $0.layer.setBorderLayout(radius: 10)
+            $0.layer.setBorderLayout(radius: 15, width: 1, color: UIColor.black)
         })
     }
     
@@ -61,6 +62,13 @@ class MarvelCharactersTableViewCell: CommonTableViewCell {
         
         if let image {
             self.imgThumbnail?.image = image
+        }
+    }
+    
+    public func toggleExpandedView() {
+        detailView?.isHidden.toggle()
+        UIView.animate(withDuration: 0.25) {
+            self.layoutIfNeeded()
         }
     }
     
@@ -99,8 +107,9 @@ extension MarvelCharactersTableViewCell {
      * @creator : coder3306
      * @param sender : UIButton
      */
-    @IBAction private func actionShowDetail(_ sender: UIButton) {
-        sender.isSelected = !sender.isSelected
-        self.actionHandler?(sender.isSelected)
+    @IBAction private func actionSelectDetail(_ sender: UIButton) {
+//        self.toggleExpandedView()
+//        sender.isSelected = !sender.isSelected
+//        self.actionHandler?(sender.isSelected)
     }
 }

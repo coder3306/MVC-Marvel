@@ -13,7 +13,7 @@ protocol NetworkClient {
 }
 
 protocol ImageClient {
-    func downloadImage(from urlString: String, completion: @escaping dataHandler<UIImage>)
+    func downloadImage(from urlString: String, completion: @escaping (ApiResult<Data>) -> ())
 }
 
 final class NetworkManager: NetworkClient, ImageClient {
@@ -36,7 +36,7 @@ final class NetworkManager: NetworkClient, ImageClient {
                 completion(.success(data))
             case .failure(let error):
                 print("Alamofire Error --------------------> \(error)")
-                completion(.failure(.statusCodeError))
+                completion(.failure(error))
             }
         }
     }
@@ -45,22 +45,18 @@ final class NetworkManager: NetworkClient, ImageClient {
      * @이미지 데이터를 요청합니다.
      * @creator : coder3306
      * @param url : 이미지 다운로드 주소
-     * @Return : 다운로드된 이미지 반환
+     * @Return : 다운로드된 이미지 데이터 반환
      */
-    public func downloadImage(from urlString: String, completion: @escaping dataHandler<UIImage>) {
+    public func downloadImage(from urlString: String, completion: @escaping (ApiResult<Data>) -> ()) {
         AF.request(urlString, method: .get)
             .validate()
             .responseData { response in
                 switch response.result {
                     case .success(let data):
-                        if let image = UIImage(data: data) {
-                            completion(image)
-                            return
-                        }
-                        completion(nil)
+                        completion(.success(data))
                     case .failure(let error):
-                        completion(nil)
-                        print(error)
+                        print("Alamofire Error --------------------> \(error)")
+                        completion(.failure(error))
                 }
         }
     }

@@ -8,28 +8,23 @@
 import UIKit
 
 class MarvelCharactersDetailCollectionViewCell: CommonCollectionViewCell {
-    @IBOutlet private weak var imgCharactesDetail: UIImageView?
+    /// 캐릭터 상세보기 이미지
+    @IBOutlet weak var imgCharactesDetail: UIImageView?
+    /// 캐릭터 정보 라벨
     @IBOutlet private weak var lblCharactersInfo: UILabel?
 
     override func awakeFromNib() {
         super.awakeFromNib()
     }
 
+    /**
+     * 캐릭터 정보 설정
+     * - Author: coder3306
+     * - Parameters:
+     *   - items : 캐릭터 정보 모델
+     *   - cache : 이미지 캐싱
+     */
     public func setData(_ items: ComicsDetail, with cache: NSCache<NSString, UIImage>) {
         lblCharactersInfo?.text = items.title
-        
-        let imageURL = items.thumbnail.thumbnailURL
-        
-        if let image = cache.object(forKey: imageURL as NSString) {
-            print("Cache Image -------------- >>>>> \(image)")
-        } else {
-            requestImage(url: imageURL) { image in
-                if let image {
-                    print("Download -------------->>>>> \(image)")
-                    self.imgCharactesDetail?.image = image
-                    cache.setObject(image, forKey: imageURL as NSString)
-                }
-            }
-        }
     }
 }

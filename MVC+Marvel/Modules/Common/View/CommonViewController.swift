@@ -54,6 +54,11 @@ class CommonViewController: UIViewController {
     //******************************************************
     //MARK: - NavigationBar Setting
     //******************************************************
+    /**
+     * @네비게이션 바 설정
+     * @creator : coder3306
+     * @param naviItems : 네비게이션 바 생성에 필요한 아이템
+     */
     public func initNavigationBar(naviItems: NavigationBarItems) {
         /// 기본 네비게이션바 숨기기
         self.navigationController?.navigationBar.isHidden = true
@@ -68,6 +73,10 @@ class CommonViewController: UIViewController {
         }
     }
     
+    /**
+     * @네비게이션 뒤로가기
+     * @creator : coder3306
+     */
     @objc func popViewController() {
         self.navigationController?.popViewController(animated: true)
     }

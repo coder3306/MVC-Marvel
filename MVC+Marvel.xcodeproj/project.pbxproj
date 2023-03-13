@@ -17,6 +17,7 @@
 		1966BC0A296E99D4004224B3 /* UITableViewCell+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1966BC09296E99D4004224B3 /* UITableViewCell+Extension.swift */; };
 		1984C93A29714E8300FB28BC /* CALayer+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1984C93929714E8300FB28BC /* CALayer+Extension.swift */; };
 		1984C93C2971516A00FB28BC /* MarvelDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1984C93B2971516A00FB28BC /* MarvelDetail.swift */; };
+		1987D682299A1A4A007FA0A4 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1987D681299A1A4A007FA0A4 /* UIImage+Extension.swift */; };
 		198820E02994799400D0EB5A /* ImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198820DF2994799400D0EB5A /* ImageProvider.swift */; };
 		19885CCF296D4D0C0010606D /* MarvelCharactersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19885CCD296D4D0C0010606D /* MarvelCharactersTableViewCell.swift */; };
 		19885CD0296D4D0C0010606D /* MarvelCharactersTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19885CCE296D4D0C0010606D /* MarvelCharactersTableViewCell.xib */; };
@@ -56,6 +57,7 @@
 		1966BC09296E99D4004224B3 /* UITableViewCell+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Extension.swift"; sourceTree = "<group>"; };
 		1984C93929714E8300FB28BC /* CALayer+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extension.swift"; sourceTree = "<group>"; };
 		1984C93B2971516A00FB28BC /* MarvelDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarvelDetail.swift; sourceTree = "<group>"; };
+		1987D681299A1A4A007FA0A4 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		198820DF2994799400D0EB5A /* ImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProvider.swift; sourceTree = "<group>"; };
 		19885CCD296D4D0C0010606D /* MarvelCharactersTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarvelCharactersTableViewCell.swift; sourceTree = "<group>"; };
 		19885CCE296D4D0C0010606D /* MarvelCharactersTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MarvelCharactersTableViewCell.xib; sourceTree = "<group>"; };
@@ -200,7 +202,7 @@
 		19917D9B296C0C3C009B39A0 /* MVC+Marvel */ = {
 			isa = PBXGroup;
 			children = (
-				19B2BCBD296D45F200E9CE03 /* Protocol */,
+				19B2BCBD296D45F200E9CE03 /* Common */,
 				19B2BCBC296D45EB00E9CE03 /* Extension */,
 				19B2BCC7296D46EE00E9CE03 /* Network */,
 				199DF7A42974DD5900CE7378 /* Custom */,
@@ -233,16 +235,17 @@
 				1984C93929714E8300FB28BC /* CALayer+Extension.swift */,
 				1966BC09296E99D4004224B3 /* UITableViewCell+Extension.swift */,
 				199DF7AF2974ED3600CE7378 /* UICollectionViewCell+Extension.swift */,
+				1987D681299A1A4A007FA0A4 /* UIImage+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
 		};
-		19B2BCBD296D45F200E9CE03 /* Protocol */ = {
+		19B2BCBD296D45F200E9CE03 /* Common */ = {
 			isa = PBXGroup;
 			children = (
 				19885CD9296D52770010606D /* CommonEnum.swift */,
 			);
-			path = Protocol;
+			path = Common;
 			sourceTree = "<group>";
 		};
 		19B2BCBE296D460800E9CE03 /* Model */ = {
@@ -446,6 +449,7 @@
 				19885CCF296D4D0C0010606D /* MarvelCharactersTableViewCell.swift in Sources */,
 				199DF7AB2974E91300CE7378 /* MarvelCharactersDetailCollectionViewCell.swift in Sources */,
 				19B2BCC9296D46FA00E9CE03 /* NetworkManager.swift in Sources */,
+				1987D682299A1A4A007FA0A4 /* UIImage+Extension.swift in Sources */,
 				19917DA7296C0C3C009B39A0 /* MVC_Marvel.xcdatamodeld in Sources */,
 				19885CD8296D4E1D0010606D /* Bundle+Extension.swift in Sources */,
 				199DF7B02974ED3600CE7378 /* UICollectionViewCell+Extension.swift in Sources */,

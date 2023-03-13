@@ -211,6 +211,7 @@ extension MarvelCharactersListViewController: tableViewExtension {
         let pageIdentifier = MarvelCharactersLoadingTableViewCell.reuseIdentifier
         if indexPath.section == 0 {
             if let cell = tableView.dequeueReusableCell(withIdentifier: listIdentifier, for: indexPath) as? MarvelCharactersTableViewCell {
+                cell.selectionStyle = .none
                 if let item = tableConfig.items?.first?.data.results[indexPath.row] {
                     let cachedImage = cache.object(forKey: item.thumbnail.thumbnailURL as NSString)
                     cell.setData(item, image: cachedImage)
@@ -333,15 +334,21 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput, ImageT
     }
     
     /**
-     * @요청된 캐릭터 이미지 재사용 설정
+     * @요청된 캐릭터 이미지 업데이트
      * @creator : coder3306
      * @param image : 다운로드된 이미지
-     * @param urlString : 이미지 주소
+     * @param urlString : 이미지 다운로드 주소
      */
     func updateImageCell(to image: UIImage?, for urlString: String) {
         let index = indexPathsForImageCells.firstIndex(of: urlString) ?? 0
         if let cell = self.tableMarvelCharacters?.cellForRow(at: IndexPath(row: index, section: 0)) as? MarvelCharactersTableViewCell {
-            cell.imgThumbnail?.image = image
+            let width = cell.imgThumbnail?.frame.size.width ?? .zero
+            let height = cell.imgThumbnail?.frame.size.height ?? .zero
+            if let resizeImage = image?.resizeImage(newSize: CGSize(width: width, height: height)) {
+                cell.imgThumbnail?.image = resizeImage
+            } else {
+                cell.imgThumbnail?.image = image
+            }
         }
     }
 }

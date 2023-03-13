@@ -23,11 +23,14 @@ class MarvelCharacterDetailViewController: CommonViewController {
     /// 상세보기 캐릭터 정보
     var charactersInfo: CharactersInfo?
     /// 모델 데이터
-    private var model: MarvelCharactersDetailTaskInput?
+    private var detailTask: MarvelCharactersDetailTaskInput?
+    private var imageTask: ImageTaskInput?
     /// 테이블뷰 설정 정보 초기화
     private var tableConfig = CommonConfig<MarvelDetail>()
     /// 컬렉션뷰 섹션 여백 설정
     private let sectionInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+    /// 이미지 셀 인덱스 저장
+    private var indexPathsForImageCells = [String]()
     
     //******************************************************
     //MARK: - ViewController LifeCycle
@@ -42,7 +45,7 @@ class MarvelCharacterDetailViewController: CommonViewController {
         super.viewWillAppear(animated)
         setNavigationBar()
         if let url = items?.collectionURI {
-            self.model?.requestDetailList(type: MarvelDetail.self, url: url, for: items?.available ?? 0)
+            self.detailTask?.requestDetailList(type: MarvelDetail.self, url: url, for: items?.available ?? 0)
         }
     }
     
@@ -66,9 +69,13 @@ class MarvelCharacterDetailViewController: CommonViewController {
      * @creator : coder3306
      */
     private func bindModel() {
-        let model = MarvelCharactersDetailTask(networkClient: NetworkManager())
-        model.output = self
-        self.model = model
+        let detailTask = MarvelCharactersDetailTask(networkClient: NetworkManager())
+        detailTask.output = self
+        self.detailTask = detailTask
+        
+        let imageTask = ImageProvider(imageClient: NetworkManager())
+        imageTask.output = self
+        self.imageTask = imageTask
     }
 }
 
@@ -102,14 +109,10 @@ extension MarvelCharacterDetailViewController: collectionViewExtension {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.frame.width
-        let height = collectionView.frame.height
         let itemsPerRow: CGFloat = 2
-        let widthPadding = sectionInsets.left * (itemsPerRow + 1)
         let itemsPerColumn: CGFloat = 3
-        let heightPadding = sectionInsets.top * (itemsPerColumn + 1)
-        let cellWidth = (width - widthPadding) / itemsPerRow
-        let cellHeight = (height - heightPadding) / itemsPerColumn
+        let cellWidth = (collectionView.frame.width - (sectionInsets.left * (itemsPerRow + 1))) / itemsPerRow
+        let cellHeight = (collectionView.frame.height - (sectionInsets.top * (itemsPerColumn + 1))) / itemsPerColumn
         
         return CGSize(width: cellWidth, height: cellHeight)
     }
@@ -120,7 +123,7 @@ extension MarvelCharacterDetailViewController: collectionViewExtension {
 }
 
 //MARK: - Output
-extension MarvelCharacterDetailViewController: MarvelCharactersDetailTaskOutput {
+extension MarvelCharacterDetailViewController: MarvelCharactersDetailTaskOutput, ImageTaskOutput {
     /**
      * @캐릭터 상세보기 데이터 저장 및 UI 업데이트
      * @creator : coder3306
@@ -130,10 +133,46 @@ extension MarvelCharacterDetailViewController: MarvelCharactersDetailTaskOutput 
         if let item {
             self.tableConfig.items = [item]
             self.tableConfig.cellCount = item.data.results.count
+            item.data.results.forEach({ characters in
+                indexPathsForImageCells.append(characters.thumbnail.thumbnailURL)
+            })
             self.collectionCharactersDetail?.reloadData()
         } else {
             self.tableConfig.items = nil
             self.tableConfig.cellCount = 0
+        }
+    }
+    
+    /**
+     * @요청된 캐릭터 이미지 캐싱처리
+     * @creator : coder3306
+     * @param image : 요청된 이미지
+     * @param urlString : 이미지 다운로드 주소
+     */
+    func responseImage(_ image: UIImage?, to urlString: String) {
+        if let image {
+            cache.setObject(image, forKey: urlString as NSString)
+            self.updateImageCell(to: image, for: urlString)
+        }
+    }
+    
+    /**
+     * @요청된 캐릭터 이미지 업데이트
+     * @creator : coder3306
+     * @param image : 다운로드된 이미지
+     * @param urlString : 이미지 다운로드 주소
+     */
+    func updateImageCell(to image: UIImage?, for urlString: String) {
+        let index = indexPathsForImageCells.firstIndex(of: urlString) ?? 0
+        if let cell = self.collectionCharactersDetail?.cellForItem(at: IndexPath(item: index, section: 0)) as? MarvelCharactersDetailCollectionViewCell {
+            let width = cell.imgCharactesDetail?.frame.size.width ?? .zero
+            let height = cell.imgCharactesDetail?.frame.size.height ?? .zero
+            
+            if let resizeImage = image?.resizeImage(newSize: CGSize(width: width, height: height)) {
+                cell.imgCharactesDetail?.image = resizeImage
+            } else {
+                cell.imgCharactesDetail?.image = image
+            }
         }
     }
 }
