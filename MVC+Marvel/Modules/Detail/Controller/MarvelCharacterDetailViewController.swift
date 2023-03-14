@@ -135,6 +135,7 @@ extension MarvelCharacterDetailViewController: MarvelCharactersDetailTaskOutput,
             self.tableConfig.cellCount = item.data.results.count
             item.data.results.forEach({ characters in
                 indexPathsForImageCells.append(characters.thumbnail.thumbnailURL)
+                self.imageTask?.requestImage(from: characters.thumbnail.thumbnailURL)
             })
             self.collectionCharactersDetail?.reloadData()
         } else {
