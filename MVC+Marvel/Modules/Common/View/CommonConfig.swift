@@ -13,50 +13,43 @@ public enum State {
     case error
 }
 
-public struct CommonConfig<T> {
-    // 매핑된 모델 데이터
-    var items: [T]?
-    // 셀 섹션 갯수
-    lazy var sectionCount = 1
-    // 셀 아이템 갯수
-    lazy var cellCount = 0
-    // 데이터 유무
-    lazy var isEmpty = false
+public struct ModelCollection<Element>: Collection {
+    private var _elements: [Element]?
     
-    // 셀 섹션 갯수 설정
-    var calcSectionCount: Int {
+    public var elements: [Element]? {
         get {
-            return 1
+            return _elements
         } set {
-            sectionCount = newValue
+            _elements = newValue
         }
     }
     
-    // 셀 Row 갯수 설정
-    var calcCellCount: Int {
-        get {
-            return items?.count ?? 0
-        } set {
-            cellCount = newValue
-        }
+    public var startIndex: Int {
+        return elements?.startIndex ?? 0
     }
     
-    // 데이터 유무 검사
-    var calcIsEmpty: Bool {
-        get {
-            return (items?.isEmpty == true || items == nil)
-        } set {
-            isEmpty = newValue
-        }
+    public var endIndex: Int {
+        return elements?.endIndex ?? 0
     }
     
-    /**
-     * @셀 데이터 설정
-     * @creator : coder3306
-     * @param index : 각 셀의 IndexPath
-     * @Return : Index에 맞는 데이터 반환
-     */
-    func cellForRowAtItems(At index: Int) -> T? {
-        return items?[index] ?? nil
+    public func index(after i: Int) -> Int {
+        return elements?.index(after: i) ?? 0
+    }
+    
+    public subscript(position: Int) -> Element? {
+        return elements?[position]
+    }
+    
+    public var isEmpty: Bool? {
+        return elements?.isEmpty
+    }
+    
+    public var count: Int? {
+        return elements?.count
+    }
+    
+    public func element(at index: Int) -> Element? {
+        guard indices.contains(index) else { return nil }
+        return elements?[index]
     }
 }

@@ -22,9 +22,8 @@ class MarvelCharactersDetailCollectionViewCell: CommonCollectionViewCell {
      * - Author: coder3306
      * - Parameters:
      *   - items : 캐릭터 정보 모델
-     *   - cache : 이미지 캐싱
      */
-    public func setData(_ items: ComicsDetail, with cache: NSCache<NSString, UIImage>) {
+    public func setData(_ items: ComicsDetail) {
         lblCharactersInfo?.text = items.title
     }
 }

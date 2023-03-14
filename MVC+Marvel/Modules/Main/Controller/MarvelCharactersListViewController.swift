@@ -28,7 +28,7 @@ class MarvelCharactersListViewController: CommonViewController {
     //MARK: - Properties
     //******************************************************
     /// 테이블뷰 설정정보
-    private var tableConfig = CommonConfig<Marvel>()
+    private var tableConfig = ModelCollection<Result>()
     /// 캐릭터 리스트 비즈니스 로직
     private var charactersTask: MarvelCharactersTaskInput?
     /// 이미지 비즈니스 로직
@@ -109,8 +109,6 @@ class MarvelCharactersListViewController: CommonViewController {
             loadingIndicator?.stopAnimating()
         } else {
             loadingIndicator?.stopAnimating()
-            self.tableConfig.cellCount = self.tableConfig.items?.first?.data.results.count ?? 0
-            self.tableConfig.calcSectionCount = 2
             self.isPaging = false
             setNavigationBar()
             self.tableMarvelCharacters?.reloadData()
@@ -195,7 +193,7 @@ extension MarvelCharactersListViewController: tableViewExtension {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return tableConfig.cellCount
+            return tableConfig.count
         } else if section == 1 && isPaging && hasNextPage {
             return 1
         }
@@ -208,21 +206,21 @@ extension MarvelCharactersListViewController: tableViewExtension {
         if indexPath.section == 0 {
             if let cell = tableView.dequeueReusableCell(withIdentifier: listIdentifier, for: indexPath) as? MarvelCharactersTableViewCell {
                 cell.selectionStyle = .none
-                if let item = tableConfig.items?.first?.data.results[indexPath.row] {
-                    let cachedImage = cache.object(forKey: item.thumbnail.thumbnailURL as NSString)
-                    cell.setData(item, image: cachedImage, isExpand: isExpandView[indexPath.row])
-                    cell.didSelectCharactersInfo { [weak self] info in
-                        print("인덱스 ---------- >>>>>> \(indexPath.row) 선택된 코드 ------------ >>>>>> \(info?.code ?? 0)")
-                        if let selectedItem = self?.tableConfig.items?.first?.data.results[indexPath.row], let info {
-                            self?.requestCharactersDetail(with: selectedItem, info: info)
-                        }
+                guard let items = tableConfig.elements, items.isEmpty == false else { return  UITableViewCell() }
+                let item = items[indexPath.row]
+                let cachedImage = cache.object(forKey: item.thumbnail.thumbnailURL as NSString)
+                cell.setData(item, image: cachedImage, isExpand: isExpandView[indexPath.row])
+                cell.didSelectCharactersInfo { [weak self] info in
+                    print("인덱스 ---------- >>>>>> \(indexPath.row) 선택된 코드 ------------ >>>>>> \(info?.code ?? 0)")
+                    if let info = info {
+                        self?.requestCharactersDetail(with: item, info: info)
                     }
-                    cell.didSelectDetail { [weak self] isSelected in
-                        print("확장 셀 인덱스 --------- >>> \(indexPath.row) 확장 상태 ---------- >>> \(isSelected)")
-                        self?.isExpandView[indexPath.row] = isSelected
-                        if let detailView = cell.detailView {
-                            cell.setExpandView(detailView, isExpanded: isSelected, index: indexPath, tableView: tableView)
-                        }
+                }
+                cell.didSelectDetail { [weak self] isSelected in
+                    print("확장 셀 인덱스 --------- >>> \(indexPath.row) 확장 상태 ---------- >>> \(isSelected)")
+                    self?.isExpandView[indexPath.row] = isSelected
+                    if let detailView = cell.detailView {
+                        cell.setExpandView(detailView, isExpanded: isSelected, index: indexPath, tableView: tableView)
                     }
                 }
                 return cell
@@ -293,7 +291,7 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput, ImageT
      */
     func responseCharactersList(_ characters: Marvel?) {
         if let characters {
-            self.tableConfig.items = [characters]
+            self.tableConfig.elements = characters.data.results
             let count = (characters.data.results.count != requestItemCount) ? (characters.data.results.count - requestItemCount) : requestItemCount
             // 셀 확장상태 초기화
             for _ in 0 ..< count {
@@ -306,7 +304,7 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput, ImageT
             })
             self.state = .ready
         } else {
-            self.tableConfig.items = nil
+            self.tableConfig.elements = nil
             self.state = .error
         }
     }

@@ -24,9 +24,10 @@ class MarvelCharacterDetailViewController: CommonViewController {
     var charactersInfo: CharactersInfo?
     /// 모델 데이터
     private var detailTask: MarvelCharactersDetailTaskInput?
+    /// 이미지 다운로드 객체
     private var imageTask: ImageTaskInput?
     /// 테이블뷰 설정 정보 초기화
-    private var tableConfig = CommonConfig<MarvelDetail>()
+    private var tableConfig = ModelCollection<ComicsDetail>()
     /// 컬렉션뷰 섹션 여백 설정
     private let sectionInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     /// 이미지 셀 인덱스 저장
@@ -95,14 +96,15 @@ extension MarvelCharacterDetailViewController: collectionViewExtension {
     //MARK: - TableView Setting
     //******************************************************
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tableConfig.cellCount
+        return tableConfig.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MarvelCharactersDetailCollectionViewCell", for: indexPath) as? MarvelCharactersDetailCollectionViewCell {
-            if let item = tableConfig.items?.first?.data.results[indexPath.row] {
-                cell.setData(item, with: cache)
-            }
+            guard let items = tableConfig.elements, items.isEmpty == false else { return UICollectionViewCell() }
+            let item = items[indexPath.row]
+            cell.imgCharactesDetail?.image = cache.object(forKey: item.thumbnail.thumbnailURL as NSString)
+            cell.setData(item)
             return cell
         }
         return UICollectionViewCell()
@@ -131,16 +133,14 @@ extension MarvelCharacterDetailViewController: MarvelCharactersDetailTaskOutput,
      */
     func responseDetailList(_ item: MarvelDetail?) {
         if let item {
-            self.tableConfig.items = [item]
-            self.tableConfig.cellCount = item.data.results.count
+            self.tableConfig.elements = item.data.results
             item.data.results.forEach({ characters in
                 indexPathsForImageCells.append(characters.thumbnail.thumbnailURL)
                 self.imageTask?.requestImage(from: characters.thumbnail.thumbnailURL)
             })
             self.collectionCharactersDetail?.reloadData()
         } else {
-            self.tableConfig.items = nil
-            self.tableConfig.cellCount = 0
+            self.tableConfig.elements = nil
         }
     }
     
