@@ -49,12 +49,11 @@ final class ImageProvider: ImageTaskInput {
                 
                 switch result {
                     case .success(let data):
-                        do {
-                            if let image = UIImage(data: data) {
-                                self?.output?.responseImage(image, to: urlString)
-                            }
-                        } catch {
+                        if let image = UIImage(data: data) {
+                            self?.output?.responseImage(image, to: urlString)
+                        } else {
                             self?.output?.responseImage(nil, to: "")
+                            print("JSON Decoding error")
                         }
                     case .failure(let apiError):
                         self?.output?.responseImage(nil, to: "")

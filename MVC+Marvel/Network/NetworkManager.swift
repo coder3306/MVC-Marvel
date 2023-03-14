@@ -35,7 +35,6 @@ final class NetworkManager: NetworkClient, ImageClient {
             case .success(let data):
                 completion(.success(data))
             case .failure(let error):
-                print("Alamofire Error --------------------> \(error)")
                 completion(.failure(error))
             }
         }
@@ -55,7 +54,6 @@ final class NetworkManager: NetworkClient, ImageClient {
                     case .success(let data):
                         completion(.success(data))
                     case .failure(let error):
-                        print("Alamofire Error --------------------> \(error)")
                         completion(.failure(error))
                 }
         }

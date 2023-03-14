@@ -43,8 +43,8 @@ class MarvelCharactersListViewController: CommonViewController {
     private var isExpandView = [Bool]()
     /// 노출된 셀 높이저장 리스트
     private var cellHeights = [IndexPath: CGFloat]()
-    /// 이미지 셀 인덱스 저장
-    private var indexPathsForImageCells = [String]()
+    /// 썸네일 URL
+    private var thumbnailURLs = [String]()
     /// 네트워크 로딩상태 열거
     private var state: State = .loading {
         didSet {
@@ -60,10 +60,6 @@ class MarvelCharactersListViewController: CommonViewController {
         initTableViewCell()
         bindModel()
         state = .loading
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         charactersTask?.requestCharactersList(type: Marvel.self, for: requestItemCount)
     }
     
@@ -214,8 +210,7 @@ extension MarvelCharactersListViewController: tableViewExtension {
                 cell.selectionStyle = .none
                 if let item = tableConfig.items?.first?.data.results[indexPath.row] {
                     let cachedImage = cache.object(forKey: item.thumbnail.thumbnailURL as NSString)
-                    cell.setData(item, image: cachedImage)
-                    cell.detailView?.isHidden = isExpandView[indexPath.row]
+                    cell.setData(item, image: cachedImage, isExpand: isExpandView[indexPath.row])
                     cell.didSelectCharactersInfo { [weak self] info in
                         print("인덱스 ---------- >>>>>> \(indexPath.row) 선택된 코드 ------------ >>>>>> \(info?.code ?? 0)")
                         if let selectedItem = self?.tableConfig.items?.first?.data.results[indexPath.row], let info {
@@ -224,14 +219,10 @@ extension MarvelCharactersListViewController: tableViewExtension {
                     }
                     cell.didSelectDetail { [weak self] isSelected in
                         print("확장 셀 인덱스 --------- >>> \(indexPath.row) 확장 상태 ---------- >>> \(isSelected)")
-                        self?.tableMarvelCharacters?.performBatchUpdates({
-                            self?.isExpandView[indexPath.row] = !isSelected
-                            cell.detailView?.isHidden = !isSelected
-                            UIView.animate(withDuration: 0.3) {
-                                cell.detailView?.alpha = isSelected ? 1 : 0
-                                self?.tableMarvelCharacters?.layoutIfNeeded()
-                            }
-                        })
+                        self?.isExpandView[indexPath.row] = isSelected
+                        if let detailView = cell.detailView {
+                            cell.setExpandView(detailView, isExpanded: isSelected, index: indexPath, tableView: tableView)
+                        }
                     }
                 }
                 return cell
@@ -306,11 +297,11 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput, ImageT
             let count = (characters.data.results.count != requestItemCount) ? (characters.data.results.count - requestItemCount) : requestItemCount
             // 셀 확장상태 초기화
             for _ in 0 ..< count {
-                self.isExpandView.append(true)
+                self.isExpandView.append(false)
             }
             // 이미지 다운로드 요청
             characters.data.results.forEach({
-                indexPathsForImageCells.append($0.thumbnail.thumbnailURL)
+                thumbnailURLs.append($0.thumbnail.thumbnailURL)
                 self.imageTask?.requestImage(from: $0.thumbnail.thumbnailURL)
             })
             self.state = .ready
@@ -332,7 +323,7 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput, ImageT
             self.updateImageCell(to: image, for: urlString)
         }
     }
-    
+
     /**
      * @요청된 캐릭터 이미지 업데이트
      * @creator : coder3306
@@ -340,7 +331,7 @@ extension MarvelCharactersListViewController: MarvelCharactersTaskOutput, ImageT
      * @param urlString : 이미지 다운로드 주소
      */
     func updateImageCell(to image: UIImage?, for urlString: String) {
-        let index = indexPathsForImageCells.firstIndex(of: urlString) ?? 0
+        let index = thumbnailURLs.firstIndex(of: urlString) ?? 0
         if let cell = self.tableMarvelCharacters?.cellForRow(at: IndexPath(row: index, section: 0)) as? MarvelCharactersTableViewCell {
             let width = cell.imgThumbnail?.frame.size.width ?? .zero
             let height = cell.imgThumbnail?.frame.size.height ?? .zero

@@ -62,7 +62,7 @@ final class MarvelCharactersTask: MarvelCharactersTaskInput {
                     do {
                         let parsing = try JSONDecoder().decode(type, from: data)
                         self?.output?.responseCharactersList(parsing as? Marvel)
-                    } catch {
+                    } catch let error {
                         self?.output?.responseCharactersList(nil)
                         print("JSON Decoding error ------------ >>> \(error)")
                     }
